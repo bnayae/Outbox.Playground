@@ -16,7 +16,7 @@ var app = builder.Build();
 
 var scopeFactory = app.Services.GetRequiredService<IServiceScopeFactory>();
 // Auto-apply migrations on startup
-await scopeFactory.ApplyMigrationsAsync();
+await scopeFactory.BootstrapDatabaseAsync();
 
 // Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())

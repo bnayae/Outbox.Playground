@@ -1,9 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using Microsoft.EntityFrameworkCore;
+﻿using Microsoft.EntityFrameworkCore;
 using OutboxPlayground.Samples.Abstractions;
 using OutboxPlayground.Samples.EFRepository;
 
@@ -21,10 +16,15 @@ public static class EFRepositoryDIExtenssions
         return services;
     }
 
-    public static async Task ApplyMigrationsAsync(this IServiceScopeFactory scopeFactory)
+    public static async Task BootstrapDatabaseAsync(this IServiceScopeFactory scopeFactory)
     {
         using var scope = scopeFactory.CreateScope();
         var dbContext = scope.ServiceProvider.GetRequiredService<PaymentDbContext>();
+
+        // Ensure database is created first
+        await dbContext.Database.EnsureCreatedAsync();
+
+        // Then apply any pending migrations
         await dbContext.Database.MigrateAsync();
     }
 }

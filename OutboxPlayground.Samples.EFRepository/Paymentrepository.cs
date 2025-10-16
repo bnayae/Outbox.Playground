@@ -1,4 +1,5 @@
-﻿using OutboxPlayground.Samples.Abstractions;
+﻿using OutboxPlayground.Infra.Abstractions;
+using OutboxPlayground.Samples.Abstractions;
 
 namespace OutboxPlayground.Samples.EFRepository;
 
@@ -15,9 +16,7 @@ internal class Paymentrepository : IPaymentRepository
     {
         _context.Payments.Add(payment);
 
-        // ADD Outbox
-
-        // _context.Outbox.Add(Infra.Abstractions.CloudEvent.Create();
+        _context.Outbox.Add(CloudEvent.Create(Guid.NewGuid().ToString(),"paymentservice", System.Text.Json.JsonSerializer.SerializeToUtf8Bytes(payment), "PaymentCreated"));
 
         await _context.SaveChangesAsync(cancellationToken);
     }

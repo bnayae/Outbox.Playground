@@ -44,6 +44,14 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Sample", "Sample", "{135BAA
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "OutboxPlayground.Infra.Abstractions", "OutboxPlayground.Infra.Abstractions\OutboxPlayground.Infra.Abstractions.csproj", "{E7E3BFAA-F152-4464-81EF-DF6F996558FF}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "OutboxPlayground.Samples.EFRepository", "OutboxPlayground.Samples.EFRepository\OutboxPlayground.Samples.EFRepository.csproj", "{CE239072-27F6-4475-B353-0C5E1B0D068B}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "OutboxPlayground.Samples.Abstractions", "OutboxPlayground.Samples.Abstractions\OutboxPlayground.Samples.Abstractions.csproj", "{649937C3-9BF8-4F37-B21D-90C676E9DD4E}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "OutboxPlayground.Infra.EfOutboxExtensions", "OutboxPlayground.Infra.EfOutboxExtensions\OutboxPlayground.Infra.EfOutboxExtensions.csproj", "{2B8F2E0B-3D8F-42B8-B556-A6EEF8C91CF7}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "OutboxPlayground.Samples.EFSqlServerSample", "OutboxPlayground.Samples.EFSqlServerSample\OutboxPlayground.Samples.EFSqlServerSample.csproj", "{6C4EB319-1162-456A-8FFE-42016F15350C}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -54,6 +62,22 @@ Global
 		{E7E3BFAA-F152-4464-81EF-DF6F996558FF}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{E7E3BFAA-F152-4464-81EF-DF6F996558FF}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{E7E3BFAA-F152-4464-81EF-DF6F996558FF}.Release|Any CPU.Build.0 = Release|Any CPU
+		{CE239072-27F6-4475-B353-0C5E1B0D068B}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{CE239072-27F6-4475-B353-0C5E1B0D068B}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{CE239072-27F6-4475-B353-0C5E1B0D068B}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{CE239072-27F6-4475-B353-0C5E1B0D068B}.Release|Any CPU.Build.0 = Release|Any CPU
+		{649937C3-9BF8-4F37-B21D-90C676E9DD4E}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{649937C3-9BF8-4F37-B21D-90C676E9DD4E}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{649937C3-9BF8-4F37-B21D-90C676E9DD4E}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{649937C3-9BF8-4F37-B21D-90C676E9DD4E}.Release|Any CPU.Build.0 = Release|Any CPU
+		{2B8F2E0B-3D8F-42B8-B556-A6EEF8C91CF7}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{2B8F2E0B-3D8F-42B8-B556-A6EEF8C91CF7}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{2B8F2E0B-3D8F-42B8-B556-A6EEF8C91CF7}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{2B8F2E0B-3D8F-42B8-B556-A6EEF8C91CF7}.Release|Any CPU.Build.0 = Release|Any CPU
+		{6C4EB319-1162-456A-8FFE-42016F15350C}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{6C4EB319-1162-456A-8FFE-42016F15350C}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{6C4EB319-1162-456A-8FFE-42016F15350C}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{6C4EB319-1162-456A-8FFE-42016F15350C}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -65,6 +89,10 @@ Global
 		{02EA681E-C7D8-13C7-8484-4AC65E1B71E8} = {C1597079-5931-4673-9C45-2F5FFF436D86}
 		{B6B4ECB0-B0A1-43F5-910F-1AC42138E617} = {C1597079-5931-4673-9C45-2F5FFF436D86}
 		{E7E3BFAA-F152-4464-81EF-DF6F996558FF} = {08B43F61-B202-4051-B578-F542437699D7}
+		{CE239072-27F6-4475-B353-0C5E1B0D068B} = {135BAA56-DC54-4A82-9F09-6D546C5D1BFB}
+		{649937C3-9BF8-4F37-B21D-90C676E9DD4E} = {135BAA56-DC54-4A82-9F09-6D546C5D1BFB}
+		{2B8F2E0B-3D8F-42B8-B556-A6EEF8C91CF7} = {08B43F61-B202-4051-B578-F542437699D7}
+		{6C4EB319-1162-456A-8FFE-42016F15350C} = {135BAA56-DC54-4A82-9F09-6D546C5D1BFB}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {1F26719C-6C74-4F13-9C9C-9B88C7CDDFC8}

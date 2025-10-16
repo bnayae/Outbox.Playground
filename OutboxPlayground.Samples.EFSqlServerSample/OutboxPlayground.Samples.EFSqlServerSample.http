@@ -1,0 +1,27 @@
+@OutboxPlayground.Samples.EFSqlServerSample_HostAddress = http://localhost:5284
+
+GET {{OutboxPlayground.Samples.EFSqlServerSample_HostAddress}}/
+Accept: application/json
+
+###
+
+
+
+POST {{OutboxPlayground.Samples.EFSqlServerSample_HostAddress}}/
+Content-Type: application/json
+
+{
+  "id": "{{$guid}}",
+  "amount": 99.99,
+  "currency": "USD",
+  "paymentMethod": "CreditCard",
+  "customerId": "{{$guid}}",
+  "createdAt": "{{$datetime iso8601}}",
+  "status": 0
+}
+
+###
+
+# Response
+
+

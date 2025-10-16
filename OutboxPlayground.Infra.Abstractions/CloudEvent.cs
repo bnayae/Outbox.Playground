@@ -6,7 +6,7 @@ namespace OutboxPlayground.Infra.Abstractions;
 /// <summary>
 /// Represents a CloudEvent as defined by the CloudEvents specification v1.0.
 /// </summary>
-public class CloudEvent
+public record CloudEvent
 {
     #region SpecVersion
 

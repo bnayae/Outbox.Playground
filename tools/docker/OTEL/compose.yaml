@@ -1,0 +1,45 @@
+version: '3.7'
+name: otel-services-outbox-playground
+services:
+  jaeger:
+    image: jaegertracing/opentelemetry-all-in-one
+    container_name: evdb-jaeger
+    environment:
+      - COLLECTOR_OTLP_ENABLED=true
+    ports:
+      - 16686:16686
+      - 4318:4318
+      - 4317:4317
+    restart: unless-stopped
+  aspire-dashboard:
+    # https://learn.microsoft.com/en-us/dotnet/aspire/fundamentals/dashboard/configuration
+    image: mcr.microsoft.com/dotnet/nightly/aspire-dashboard:latest
+    container_name: evdb-aspire-dashboard
+    ports:
+      - 18888:18888
+      - 18889:18889
+      # - 4317:18889
+    environment:
+      - DASHBOARD__TELEMETRYLIMITS__MAXLOGCOUNT=1000
+      - DASHBOARD__TELEMETRYLIMITS__MAXTRACECOUNT=1000
+      - DASHBOARD__TELEMETRYLIMITS__MAXMETRICCOUNT=1000
+      - DOTNET_DASHBOARD_UNSECURED_ALLOW_ANONYMOUS=true
+    restart: unless-stopped
+    
+  grafana-lgtm-alt:
+    container_name: evdb-otel-lgtm-alt
+    image: grafana/otel-lgtm:latest
+    ports:
+       - 4338:4318  
+       - 4337:4317  
+       - 3001:3000  
+    environment:
+      # https://opentelemetry.io/docs/specs/otel/configuration/sdk-environment-variables/#periodic-exporting-metricreader
+      OTEL_METRIC_EXPORT_INTERVAL: 500
+      OTEL_SERVICE_NAME: otel-demo
+      GF_SECURITY_ADMIN_USER: admin
+      GF_SECURITY_ADMIN_PASSWORD: grafana
+    volumes:
+      - ./grafana/dashboard.yaml:/etc/grafana/provisioning/dashboards/main.yaml
+      - ./grafana/dashboards:/var/lib/grafana/dashboards
+    restart: unless-stopped

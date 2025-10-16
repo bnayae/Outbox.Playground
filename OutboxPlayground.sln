@@ -1,0 +1,71 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 17
+VisualStudioVersion = 17.14.36221.1
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{8EC462FD-D22E-90A8-E5CE-7E832BA40C5D}"
+	ProjectSection(SolutionItems) = preProject
+		.dockerignore = .dockerignore
+		.editorconfig = .editorconfig
+		.gitignore = .gitignore
+		Directory.Build.props = Directory.Build.props
+	EndProjectSection
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Docker", "Docker", "{C1597079-5931-4673-9C45-2F5FFF436D86}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "DBs", "DBs", "{CCAA3027-1D72-4C45-A4C8-6C52187806B6}"
+	ProjectSection(SolutionItems) = preProject
+		tools\docker\DBs\compose.yaml = tools\docker\DBs\compose.yaml
+	EndProjectSection
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "OTEL", "OTEL", "{F7E5AD17-FC90-41B8-977D-0A5D21C95728}"
+	ProjectSection(SolutionItems) = preProject
+		tools\docker\OTEL\compose.yaml = tools\docker\OTEL\compose.yaml
+	EndProjectSection
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Tests", "Tests", "{A5C07D83-BDF7-4B8F-B164-1A0CF3314448}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Tools", "Tools", "{DFC10ECB-A3F4-49BA-A9BF-D90F34482C53}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Infra", "Infra", "{08B43F61-B202-4051-B578-F542437699D7}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "kafka-connect-loaclstack", "kafka-connect-loaclstack", "{02EA681E-C7D8-13C7-8484-4AC65E1B71E8}"
+	ProjectSection(SolutionItems) = preProject
+		tools\docker\kafka-connect-loaclstack\Compose.yml = tools\docker\kafka-connect-loaclstack\Compose.yml
+	EndProjectSection
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "localstack", "localstack", "{B6B4ECB0-B0A1-43F5-910F-1AC42138E617}"
+	ProjectSection(SolutionItems) = preProject
+		tools\docker\localstack\docker-compose.yml = tools\docker\localstack\docker-compose.yml
+	EndProjectSection
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Sample", "Sample", "{135BAA56-DC54-4A82-9F09-6D546C5D1BFB}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "OutboxPlayground.Infra.Abstractions", "OutboxPlayground.Infra.Abstractions\OutboxPlayground.Infra.Abstractions.csproj", "{E7E3BFAA-F152-4464-81EF-DF6F996558FF}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{E7E3BFAA-F152-4464-81EF-DF6F996558FF}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{E7E3BFAA-F152-4464-81EF-DF6F996558FF}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{E7E3BFAA-F152-4464-81EF-DF6F996558FF}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{E7E3BFAA-F152-4464-81EF-DF6F996558FF}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(NestedProjects) = preSolution
+		{C1597079-5931-4673-9C45-2F5FFF436D86} = {DFC10ECB-A3F4-49BA-A9BF-D90F34482C53}
+		{CCAA3027-1D72-4C45-A4C8-6C52187806B6} = {C1597079-5931-4673-9C45-2F5FFF436D86}
+		{F7E5AD17-FC90-41B8-977D-0A5D21C95728} = {C1597079-5931-4673-9C45-2F5FFF436D86}
+		{02EA681E-C7D8-13C7-8484-4AC65E1B71E8} = {C1597079-5931-4673-9C45-2F5FFF436D86}
+		{B6B4ECB0-B0A1-43F5-910F-1AC42138E617} = {C1597079-5931-4673-9C45-2F5FFF436D86}
+		{E7E3BFAA-F152-4464-81EF-DF6F996558FF} = {08B43F61-B202-4051-B578-F542437699D7}
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {1F26719C-6C74-4F13-9C9C-9B88C7CDDFC8}
+	EndGlobalSection
+EndGlobal

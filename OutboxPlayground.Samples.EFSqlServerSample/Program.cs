@@ -1,4 +1,5 @@
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions;
 using OutboxPlayground.Samples.Abstractions;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -11,6 +12,7 @@ services.AddSwaggerGen();
 
 var connStr = builder.Configuration.GetConnectionString("PaymentConnection") ?? throw new Exception("PaymentConnection not found");
 services.AddPaymentRepository(connStr);
+builder.AddOtel();
 
 var app = builder.Build();
 

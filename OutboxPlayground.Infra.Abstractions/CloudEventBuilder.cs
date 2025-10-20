@@ -1,4 +1,5 @@
-﻿using System.Text.Json.Serialization;
+﻿using System.Diagnostics;
+using System.Text.Json.Serialization;
 
 namespace OutboxPlayground.Infra.Abstractions;
 
@@ -123,24 +124,26 @@ internal readonly record struct CloudEventBuilder:
 
         #endregion //  Validation
 
-        string? dataSchema = DataSchemaProvider?.DataSchemaPrefix is not null
+        string? dataSchema = DataSchemaProvider.DataSchemaPrefix is not null
                                 ? $"{DataSchemaProvider.DataSchemaPrefix}{Type}"
                                 : null;
 
-        if(!await DataSchemaProvider?.Validate(data, Type))
+        if(!await DataSchemaProvider.ValidateAsync(data, Type))
         {
             throw new InvalidOperationException("Data validation against schema failed.");
         }
 
-        return new CloudEvent()
+        OtelTraceParent? traceParent = Activity.Current?.SerializeTelemetryContext();
+        return new CloudEvent() 
         {
             Type = Type,
             Source = Source,
             Id = id?.ToString() ?? throw new ArgumentNullException(nameof(id)),
             Time = _timeProvider.GetUtcNow(),
-            DataContentType = DataSchemaProvider?.DataContentType,
+            DataContentType = DataSchemaProvider.DataContentType,
             DataSchema = dataSchema,
-            Data = DataSchemaProvider?.Serialize(data)
+            TraceParent = traceParent,
+            Data = DataSchemaProvider.Serialize(data)
         };
     }
 
@@ -170,12 +173,14 @@ internal readonly record struct CloudEventBuilder:
     /// <exception cref="ArgumentNullException">Thrown when id is null</exception>
     CloudEvent ICloudEventBuilder.DataRefBuild<TId>(TId id, string dataRef)
     {
+        OtelTraceParent? traceParent = Activity.Current?.SerializeTelemetryContext();
         return new CloudEvent()
         {
             Type = Type,
             Source = Source,
             Id = id?.ToString() ?? throw new ArgumentNullException(nameof(id)),
             Time = _timeProvider.GetUtcNow(),
+            TraceParent = traceParent,
             DataRef = dataRef
         };
     }

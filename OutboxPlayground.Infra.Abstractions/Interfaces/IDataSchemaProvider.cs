@@ -45,7 +45,7 @@ public interface IDataSchemaProvider
     /// <param name="data">The data to validate</param>
     /// <param name="type">The data type use as schema suffix.</param>
     /// <returns>True if validation passes, false otherwise</returns>
-    Task<bool> Validate<TData>(TData data, string type);
+    Task<bool> ValidateAsync<TData>(TData data, string type);
 
     /// <summary>
     /// Serializes the provided data into a byte array format according to the schema provider's implementation.

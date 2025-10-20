@@ -1,4 +1,5 @@
 ﻿using OutboxPlayground.Infra.Abstractions;
+using OutboxPlayground.Infra.EfOutboxExtensions;
 using OutboxPlayground.Samples.Abstractions;
 
 namespace OutboxPlayground.Samples.EFRepository;
@@ -21,7 +22,8 @@ internal class Paymentrepository : IPaymentRepository
         _context.Payments.Add(payment);
 
         CloudEvent cloudEvent =  await _eventBuilder.BuildAsync(payment);
-        _context.Outbox.Add(cloudEvent);
+        var entity = cloudEvent; //.ToEntity();
+        _context.Outbox.Add(entity);
 
         await _context.SaveChangesAsync(cancellationToken);
     }

@@ -26,6 +26,7 @@ CREATE TABLE [MyOutbox] (
     [Subject] nvarchar(255) NULL,
     [Data] varbinary(max) NULL,
     [DataRef] nvarchar(1000) NULL,
+    [TraceParent] varchar(55) NULL,
     CONSTRAINT [PK_MyOutbox] PRIMARY KEY ([Id])
 );
 

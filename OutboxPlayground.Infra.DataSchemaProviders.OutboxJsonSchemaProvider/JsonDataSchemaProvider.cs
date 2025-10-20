@@ -44,7 +44,7 @@ internal class JsonDataSchemaProvider : IDataSchemaProvider
     /// <param name="data">The data to validate</param>
     /// <param name="type">The data type use as schema suffix.</param>
     /// <returns>True if validation passes, false otherwise</returns>
-    async Task<bool> IDataSchemaProvider.Validate<TData>(TData data, string type)
+    async Task<bool> IDataSchemaProvider.ValidateAsync<TData>(TData data, string type)
     {
         // For JSON schema provider, we perform basic validation by attempting serialization
         // TODO: validate against a JSON schema if needed (plus schema cache)

@@ -22,9 +22,9 @@ public static class EFRepositoryDIExtenssions
         var dbContext = scope.ServiceProvider.GetRequiredService<PaymentDbContext>();
 
         // Ensure database is created first
-        await dbContext.Database.EnsureCreatedAsync();
+        //await dbContext.Database.EnsureCreatedAsync();
 
         // Then apply any pending migrations
-        await dbContext.Database.MigrateAsync();
+        //await dbContext.Database.MigrateAsync();
     }
 }

@@ -136,6 +136,20 @@ public record CloudEvent
 
     #endregion // DataRef
 
+    #region TraceParent
+
+    /// <summary>
+    /// Contains a version, trace ID, span ID, and trace flags as defined in the W3C Trace Context specification.
+    /// This extension enables distributed tracing scenarios by allowing events to carry trace context information.
+    /// The value is formatted according to the traceparent header format: version-traceid-spanid-traceflags
+    /// Example: "00-4bf92f3577b34da6a3ce929d0e0e4736-00f067aa0ba902b7-01"
+    /// </summary>
+    [JsonPropertyName("traceparent")]
+    public OtelTraceParent? TraceParent { get; init; }
+
+    #endregion // TraceParent
+
+
     /// <summary>
     /// Creates a new CloudEventBuilder instance for building CloudEvents with the specified source.
     /// </summary>

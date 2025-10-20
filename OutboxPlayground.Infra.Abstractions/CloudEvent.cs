@@ -1,13 +1,19 @@
-﻿using System.Text.Json.Serialization;
+﻿using System.Runtime.Serialization;
+using System.Text.Json.Serialization;
 
 namespace OutboxPlayground.Infra.Abstractions;
 
-
 /// <summary>
 /// Represents a CloudEvent as defined by the CloudEvents specification v1.0.
+/// CloudEvents is a specification for describing event data in common formats to provide interoperability across services, platforms and systems.
 /// </summary>
 public record CloudEvent
 {
+    /// <summary>
+    /// The CloudEvents specification version constant.
+    /// </summary>
+    public const string SPEC_VERSION = "1.0";
+
     #region SpecVersion
 
     /// <summary>
@@ -15,7 +21,7 @@ public record CloudEvent
     /// This enables the interpretation of the context. Compliant event producers MUST use a value of "1.0" when referring to this version of the specification.
     /// </summary>
     [JsonPropertyName("specversion")]
-    public required string SpecVersion { get; init; }
+    public string SpecVersion { get; init; } = SPEC_VERSION;
 
     #endregion // SpecVersion
 
@@ -130,39 +136,16 @@ public record CloudEvent
 
     #endregion // DataRef
 
-    #region Create
-
     /// <summary>
-    /// Creates a new CloudEvent with default values for common scenarios.
+    /// Creates a new CloudEventBuilder instance for building CloudEvents with the specified source.
     /// </summary>
-    /// <param name="type">The type of event</param>
-    /// <param name="source">The source of the event</param>
-    /// <param name="data">Optional event payload</param>
-    /// <param name="subject">Optional subject of the event</param>
-    /// <returns>A new CloudEvent instance</returns>
-    public static CloudEvent Create(string type,
-                                    string source,
-                                    byte[]? data = null,
-                                    string? subject = null)
+    /// <param name="source">The context in which events will happen</param>
+    /// <param name="timeProvider">Optional time provider for generating timestamps. Uses System time provider if not specified.</param>
+    /// <returns>A new CloudEventBuilder instance</returns>
+    public static ICloudEventBuilderSource CreateBuilder(string source, TimeProvider? timeProvider = null)
     {
-        var result = new CloudEvent()
-        {
-            SpecVersion = "1.0",
-            Type = type,
-            Source = source,
-            Id = Guid.NewGuid().ToString(),
-            Time = DateTime.UtcNow,
-            DataContentType = "application/json",
-            Subject = subject,
-            Data = data
-        };
+        var result = new CloudEventBuilder(source, timeProvider ?? TimeProvider.System);
         return result;
     }
-
-    #endregion //  Create
-
-    // TODO: CreateJson<T>
-    // TODO: CreateProto<T>
-    // TODO: CreateAvro<T>
 }
 

@@ -1,0 +1,25 @@
+{
+  "name": "mssql-jdbc-source-connector_outbox",
+  "config": {
+    "connector.class": "io.confluent.connect.jdbc.JdbcSourceConnector",
+    "tasks.max": "1",
+    "errors.log.enable": "true",
+    "errors.log.include.messages": "true",
+    "connection.url": "jdbc:sqlserver://host.docker.internal:1433;databaseName=master",
+    "connection.user": "sa",
+    "connection.password": "MasadNetunim12!@",
+    "table.whitelist": "MyOutbox",
+    "numeric.mapping": "none",
+	"mode": "timestamp",
+    "timestamp.column.name": "Time",
+    "timestamp.delay.interval.ms": "0",
+    "validate.non.null": "false",
+    "topic.prefix": "applicationevents_",
+    "topic.creation.default.partitions": "1",
+	"poll.interval.ms": "5000",
+    "auto.create.topics.enable": "true",
+    "schema.registry.url": "http://localhost:28081",
+    "key.null.support.enabled": "true",
+    "topic.creation.default.replication.factor": "1"
+  }
+}

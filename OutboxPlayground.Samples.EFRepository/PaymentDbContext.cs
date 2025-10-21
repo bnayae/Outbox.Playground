@@ -20,7 +20,7 @@ internal class PaymentDbContext : OutboxContext
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
-        // Configure Payment entity
+        // Configure PaymentMessage entity
         modelBuilder.Entity<Payment>(entity =>
         {
             entity.HasKey(p => p.Id);

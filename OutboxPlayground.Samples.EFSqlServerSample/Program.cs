@@ -1,6 +1,7 @@
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions;
 using OutboxPlayground.Samples.Abstractions;
+using OutboxPlayground.Samples.EFSqlServerSample;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -14,6 +15,7 @@ var connStr = builder.Configuration.GetConnectionString("PaymentConnection") ?? 
 services.AddPaymentRepository(connStr);
 builder.AddOtel();
 services.AddJsonDataSchemaProvider();
+services.AddSingleton<IRiskAssessmentService, RiskAssessmentProxy>(); // just a sample
 
 var app = builder.Build();
 

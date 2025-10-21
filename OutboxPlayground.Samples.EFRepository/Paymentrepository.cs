@@ -6,11 +6,15 @@ namespace OutboxPlayground.Samples.EFRepository;
 internal class Paymentrepository : IPaymentRepository
 {
     private readonly PaymentDbContext _context;
+    private readonly IRiskAssessmentService _riskAssessmentService;
     private readonly ICloudEventBuilder _eventBuilder;
 
-    public Paymentrepository(PaymentDbContext context, IDataSchemaProvider dataSchemaProvider)
+    public Paymentrepository(PaymentDbContext context,
+                             IRiskAssessmentService riskAssessmentService,
+                             IDataSchemaProvider dataSchemaProvider)
     {
         _context = context;
+        _riskAssessmentService = riskAssessmentService;
         _eventBuilder = CloudEvent.CreateBuilder("MyBusinessDomain")
                           .AddSchema(dataSchemaProvider)
                           .AddType("PaymentCreated");
@@ -20,9 +24,10 @@ internal class Paymentrepository : IPaymentRepository
     {
         _context.Payments.Add(payment);
 
-        CloudEvent cloudEvent = await _eventBuilder.BuildAsync(payment);
-        var entity = cloudEvent; //.ToEntity();
-        _context.Outbox.Add(entity);
+        Risk risk = await _riskAssessmentService.AssessRiskAsync(payment, cancellationToken);
+        PaymentMessage message  = payment.ToMessage(risk);
+        CloudEvent cloudEvent = await _eventBuilder.BuildAsync(message);
+        _context.Outbox.Add(cloudEvent);
 
         await _context.SaveChangesAsync(cancellationToken);
     }

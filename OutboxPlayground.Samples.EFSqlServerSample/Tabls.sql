@@ -11,6 +11,7 @@ CREATE TABLE [Payments] (
     [CustomerId] uniqueidentifier NOT NULL,
     [CreatedAt] datetime2 NOT NULL,
     [Status] nvarchar(20) NOT NULL,
+    RiskAssessment nvarchar(20) NOT NULL,
     CONSTRAINT [PK_Payments] PRIMARY KEY ([Id])
 );
 
@@ -43,6 +44,11 @@ CREATE INDEX [IX_MyOutbox_Time] ON [MyOutbox] ([Time]);
 ALTER TABLE [Payments] 
 ADD CONSTRAINT [CK_Payments_Status] 
 CHECK ([Status] IN ('Pending', 'Processing', 'Completed', 'Failed', 'Cancelled'));
+
+-- Add constraints for RiskAssessment enum values
+ALTER TABLE [Payments] 
+ADD CONSTRAINT [CK_Payments_RiskAssessment] 
+CHECK ([Status] IN ('Low', 'Medium', 'High'));
 
 -- Add constraints for CloudEvent required fields
 ALTER TABLE [MyOutbox] 

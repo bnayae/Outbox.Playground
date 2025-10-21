@@ -4,7 +4,7 @@
 /// Builder interface for configuring CloudEvent source, schema, and type information.
 /// </summary>
 public interface ICloudEventBuilderSource
-{   
+{
     /// <summary>
     /// Adds a data schema and its corresponding provider to the CloudEvent builder.
     /// </summary>

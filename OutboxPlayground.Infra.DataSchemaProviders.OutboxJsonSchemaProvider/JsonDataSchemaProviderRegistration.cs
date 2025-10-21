@@ -1,11 +1,6 @@
 ﻿using OutboxPlayground.Infra.Abstractions;
 using OutboxPlayground.Infra.DataSchemaProviders.OutboxJsonSchemaProvider;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 using System.Text.Json;
-using System.Threading.Tasks;
 
 namespace Microsoft.Extensions.DependencyInjection;
 
@@ -40,7 +35,7 @@ public static class JsonDataSchemaProviderRegistration
     /// </code>
     /// </example>
     public static IServiceCollection AddJsonDataSchemaProvider(
-                                            this IServiceCollection services, 
+                                            this IServiceCollection services,
                                             JsonSerializerOptions? options = null)
     {
         IDataSchemaProvider instance = new JsonDataSchemaProvider(options);

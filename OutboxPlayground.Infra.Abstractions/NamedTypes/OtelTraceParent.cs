@@ -7,7 +7,7 @@ namespace OutboxPlayground.Infra.Abstractions;
     toPrimitiveCasting: CastOperator.Implicit, // Implicit casting from Email to string
         fromPrimitiveCasting: CastOperator.Implicit)] // Implicit casting from string to Email
 // [Instance("Empty", "00-00000000000000000000000000000000-0000000000000000-00")]
-public readonly partial struct OtelTraceParent 
+public readonly partial struct OtelTraceParent
 {
     [GeneratedRegex(@"^00-[0-9a-f]{32}-[0-9a-f]{16}-[0-9a-f]{2}$",
                 RegexOptions.Compiled | RegexOptions.CultureInvariant | RegexOptions.IgnoreCase,

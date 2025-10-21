@@ -7,8 +7,8 @@ namespace OutboxPlayground.Infra.Abstractions;
 /// Immutable builder for creating CloudEvent instances following the builder pattern.
 /// Implements both source configuration and event building capabilities.
 /// </summary>
-internal readonly record struct CloudEventBuilder: 
-                                    ICloudEventBuilderSource, 
+internal readonly record struct CloudEventBuilder :
+                                    ICloudEventBuilderSource,
                                     ICloudEventBuilder
 {
     private readonly TimeProvider _timeProvider;
@@ -59,7 +59,7 @@ internal readonly record struct CloudEventBuilder:
     /// <summary>
     /// The dataRef schema provider responsible for serializing event dataRef according to the specified schema.
     /// </summary>
-    public IDataSchemaProvider? DataSchemaProvider { get; init; } 
+    public IDataSchemaProvider? DataSchemaProvider { get; init; }
 
     #endregion //  DataSchemaProvider
 
@@ -117,7 +117,7 @@ internal readonly record struct CloudEventBuilder:
     {
         #region Validation
 
-        if(DataSchemaProvider is null)
+        if (DataSchemaProvider is null)
         {
             throw new InvalidOperationException("DataSchemaProvider is not configured.");
         }
@@ -128,13 +128,13 @@ internal readonly record struct CloudEventBuilder:
                                 ? $"{DataSchemaProvider.DataSchemaPrefix}{Type}"
                                 : null;
 
-        if(!await DataSchemaProvider.ValidateAsync(data, Type))
+        if (!await DataSchemaProvider.ValidateAsync(data, Type))
         {
             throw new InvalidOperationException("Data validation against schema failed.");
         }
 
         OtelTraceParent? traceParent = Activity.Current?.SerializeTelemetryContext();
-        return new CloudEvent() 
+        return new CloudEvent()
         {
             Type = Type,
             Source = Source,
@@ -160,7 +160,7 @@ internal readonly record struct CloudEventBuilder:
     {
         ICloudEventBuilder self = this;
         var id = Guid.NewGuid();
-        return self.DataRefBuild(id, dataRef);        
+        return self.DataRefBuild(id, dataRef);
     }
 
     /// <summary>

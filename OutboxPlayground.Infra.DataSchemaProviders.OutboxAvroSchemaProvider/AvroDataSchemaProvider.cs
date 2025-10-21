@@ -1,4 +1,3 @@
-using Avro;
 using Avro.Generic;
 using Avro.IO;
 using Confluent.SchemaRegistry;
@@ -48,12 +47,12 @@ internal sealed class AvroDataSchemaProvider : IDataSchemaProvider
         {
             var subject = $"{type}-value";
             var schema = await GetSchemaAsync(subject);
-            if (schema == null) 
+            if (schema == null)
             {
                 _logger.SchemaNotFound(subject);
                 return false;
             }
-            
+
             // Validate by converting JSON to GenericRecord without full binary serialization
             return ValidateDataAgainstSchema(data, schema);
         }
@@ -70,9 +69,9 @@ internal sealed class AvroDataSchemaProvider : IDataSchemaProvider
     /// <typeparam name="TData">The type of data to serialize</typeparam>
     /// <param name="data">The data to serialize</param>
     /// <returns>Serialized data as Avro binary byte array</returns>
-    byte[] IDataSchemaProvider.Serialize<TData>(TData data) => data == null 
+    byte[] IDataSchemaProvider.Serialize<TData>(TData data) => data == null
         ? throw new ArgumentNullException(nameof(data))
-        : SerializeToAvro(data, GetSchemaAsync($"{typeof(TData).Name}-value").Result 
+        : SerializeToAvro(data, GetSchemaAsync($"{typeof(TData).Name}-value").Result
             ?? throw new InvalidOperationException($"Schema not found for {typeof(TData).Name}"));
 
     /// <summary>
@@ -86,15 +85,15 @@ internal sealed class AvroDataSchemaProvider : IDataSchemaProvider
             // Convert data to JSON first
             var json = JsonSerializer.Serialize(data);
             using var jsonStream = new MemoryStream(Encoding.UTF8.GetBytes(json));
-            
+
             // Use JsonDecoder to validate JSON structure against schema
             var jsonDecoder = new JsonDecoder(schema, jsonStream);
             var reader = new GenericDatumReader<GenericRecord>(schema, schema);
-            
+
             // This validates the structure by reading JSON into GenericRecord
             // If data doesn't match schema, this will throw an exception
             _ = reader.Read(null, jsonDecoder);
-            
+
             _logger.SchemaValidationSucceeded(typeof(TData).Name, schema.Name);
             return true;
         }
@@ -122,7 +121,7 @@ internal sealed class AvroDataSchemaProvider : IDataSchemaProvider
             var writer = new GenericDatumWriter<GenericRecord>(schema);
             writer.Write(record, encoder);
             encoder.Flush();
-            
+
             var result = stream.ToArray();
             _logger.DataSerialized(typeof(TData).Name, result.Length);
             return result;

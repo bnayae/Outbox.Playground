@@ -13,7 +13,7 @@ public abstract class OutboxContext : DbContext
     public DbSet<CloudEvent> Outbox { get; set; }
 
 
-    protected void ModelCreatingOutbox(ModelBuilder modelBuilder) 
+    protected void ModelCreatingOutbox(ModelBuilder modelBuilder)
     {
         // Configure CloudEvent entity for outbox pattern
 

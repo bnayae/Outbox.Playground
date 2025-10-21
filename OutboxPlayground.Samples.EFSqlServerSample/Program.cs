@@ -1,7 +1,6 @@
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions;
 using OutboxPlayground.Samples.Abstractions;
-using System.Text.Json;
 
 var builder = WebApplication.CreateBuilder(args);
 

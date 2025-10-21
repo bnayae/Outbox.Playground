@@ -1,0 +1,6 @@
+@OutboxPlayground.Samples.Jobs_HostAddress = http://localhost:5129
+
+GET {{OutboxPlayground.Samples.Jobs_HostAddress}}/weatherforecast/
+Accept: application/json
+
+###

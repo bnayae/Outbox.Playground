@@ -24,7 +24,7 @@ public interface IDataSchemaProvider
 
     #endregion // DataContentType
 
-    #region DataSchema
+    #region DataSchemaPrefix
 
     /// <summary>
     /// A prefix of the schema.
@@ -34,7 +34,7 @@ public interface IDataSchemaProvider
     [JsonPropertyName("dataschema")]
     string? DataSchemaPrefix { get; }
 
-    #endregion // DataSchema
+    #endregion // DataSchemaPrefix
 
     // TODO: TBD: whether to return the reason for validation failure
 

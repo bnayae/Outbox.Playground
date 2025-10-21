@@ -9,6 +9,8 @@ Accept: application/json
 
 POST {{OutboxPlayground.Samples.EFSqlServerSample_HostAddress}}/
 Content-Type: application/json
+sessionId: {{$guid}}
+deviceType: Mobile
 
 {
   "id": "{{$guid}}",

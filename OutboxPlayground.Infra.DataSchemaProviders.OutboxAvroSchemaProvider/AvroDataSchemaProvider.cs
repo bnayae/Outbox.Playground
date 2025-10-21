@@ -23,10 +23,24 @@ internal sealed class AvroDataSchemaProvider : IDataSchemaProvider
         _logger = logger;
     }
 
-    public string DataContentType => "application/avro";
-    public string? DataSchemaPrefix => "http://schema-registry:8081/subjects/";
+    /// <summary>
+    /// Gets the content type for Avro data format.
+    /// </summary>
+    string? IDataSchemaProvider.DataContentType { get; } = "application/avro";
 
-    public async Task<bool> ValidateAsync<TData>(TData data, string type)
+    /// <summary>
+    /// Gets the schema prefix for Avro schemas.
+    /// </summary>
+    string? IDataSchemaProvider.DataSchemaPrefix { get; } = "urn://avro-schema-registry/";
+
+    /// <summary>
+    /// Validates the provided data against the Avro schema.
+    /// </summary>
+    /// <typeparam name="TData">The type of data to validate</typeparam>
+    /// <param name="data">The data to validate</param>
+    /// <param name="type">The data type used as schema suffix</param>
+    /// <returns>True if validation passes, false otherwise</returns>
+    async Task<bool> IDataSchemaProvider.ValidateAsync<TData>(TData data, string type)
     {
         if (data == null || string.IsNullOrEmpty(type)) return false;
 
@@ -50,7 +64,13 @@ internal sealed class AvroDataSchemaProvider : IDataSchemaProvider
         }
     }
 
-    public byte[] Serialize<TData>(TData data) => data == null 
+    /// <summary>
+    /// Serializes the provided data into Avro binary format.
+    /// </summary>
+    /// <typeparam name="TData">The type of data to serialize</typeparam>
+    /// <param name="data">The data to serialize</param>
+    /// <returns>Serialized data as Avro binary byte array</returns>
+    byte[] IDataSchemaProvider.Serialize<TData>(TData data) => data == null 
         ? throw new ArgumentNullException(nameof(data))
         : SerializeToAvro(data, GetSchemaAsync($"{typeof(TData).Name}-value").Result 
             ?? throw new InvalidOperationException($"Schema not found for {typeof(TData).Name}"));

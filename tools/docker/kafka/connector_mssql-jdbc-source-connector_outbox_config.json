@@ -19,7 +19,18 @@
 	"poll.interval.ms": "5000",
     "auto.create.topics.enable": "true",
     "schema.registry.url": "http://localhost:28081",
-    "key.null.support.enabled": "true",
-    "topic.creation.default.replication.factor": "1"
+    "topic.creation.default.replication.factor": "1",
+	"transforms": "CreateKey,ExtractKeyField,MoveToHeaders,RemoveFields",
+	"transforms.CreateKey.type": "org.apache.kafka.connect.transforms.ValueToKey",
+    "transforms.CreateKey.fields": "Id",
+	"transforms.ExtractKeyField.type": "org.apache.kafka.connect.transforms.ExtractField$Key",
+    "transforms.ExtractKeyField.field": "Id",
+    "transforms.MoveToHeaders.type": "org.apache.kafka.connect.transforms.HeaderFrom$Value",
+    "transforms.MoveToHeaders.fields": "Id,SpecVersion,Type,Source,Time,DataContentType",
+    "transforms.MoveToHeaders.headers": "ce_id,ce_specversion,ce_type,ce_source,ce_time,content_type",
+	"transforms.MoveToHeaders.operation": "move",
+    "transforms.RemoveFields.type": "org.apache.kafka.connect.transforms.ReplaceField$Value",
+    "transforms.RemoveFields.blacklist": "Id,SpecVersion,Type,Source,Time,DataContentType,DataSchema,Subject,DataRef,TraceParent"
+  
   }
 }

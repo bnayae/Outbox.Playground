@@ -4,13 +4,23 @@ using OpenTelemetry.Logs;
 using OpenTelemetry.Metrics;
 using OpenTelemetry.Resources;
 using OpenTelemetry.Trace;
+using System.Diagnostics;
 using System.Diagnostics.CodeAnalysis;
 
 namespace Microsoft.Extensions;
 
 [ExcludeFromCodeCoverage]
-internal static class OtelRegistration
+internal static class OtelExtensions
 {
+    public const string ACTIVITY_SOURCE_NAME = "Outbox.Sample";
+
+    public static ActivitySource ACTIVITY_SOURCE = new ActivitySource(ACTIVITY_SOURCE_NAME);
+
+    public static TracerProviderBuilder AddSampleInstrumentation(this TracerProviderBuilder builder)
+    {
+        return builder.AddSource(ACTIVITY_SOURCE_NAME);
+    }
+
     public static WebApplicationBuilder AddOtel(this WebApplicationBuilder builder)
     {
         var appName = builder.Environment.ApplicationName;
@@ -55,6 +65,7 @@ internal static class OtelRegistration
                                    resource.AddService(appName)) // builder.Environment.ApplicationName
             .WithTracing(tracing =>
                 tracing
+                        .AddSampleInstrumentation()
                         .AddAspNetCoreInstrumentation(
                         o =>
                         {

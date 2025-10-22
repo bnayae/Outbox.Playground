@@ -1,16 +1,21 @@
 ﻿using Confluent.Kafka;
 using OutboxPlayground.Infra.Abstractions;
+using System.Diagnostics;
+using Microsoft.Extensions.Logging;
+using Microsoft.Extensions;
 
 namespace OutboxPlayground.Samples.Jobs;
 
 internal class Job : BackgroundService
 {
+    private readonly ILogger _logger;
     private readonly IServiceScopeFactory _scopeFactory;
     private readonly ConsumerConfig _kafkaConfig;
     private readonly string _topicName;
 
-    public Job(IServiceScopeFactory scopeFactory, IConfiguration configuration)
+    public Job(ILogger<Job> logger, IServiceScopeFactory scopeFactory, IConfiguration configuration)
     {
+        _logger = logger;
         _scopeFactory = scopeFactory;
         _topicName = configuration["Kafka:TopicName"] ?? throw new ArgumentException("Kafka:TopicName configuration is required");
         _kafkaConfig = GetKafkaConfig(configuration);
@@ -42,9 +47,43 @@ internal class Job : BackgroundService
 
                 #endregion //  Validation
 
-                var record = System.Text.Json.JsonSerializer.Deserialize<CloudEvent>(value);
+                // Get headers from message for distributed tracing and CloudEvent metadata
 
-                // TODO: Activity + traceparent + log
+                #region Extract Headers
+
+                OtelTraceParent? traceParent = null;
+                string? ceType = null;
+                string? ceTime = null;
+                string? contentType = null;
+
+                if (cr.Message.Headers != null)
+                {
+                    string? GetHeader(string headerName)
+                    {
+                        var header = cr.Message.Headers.FirstOrDefault(h => 
+                            string.Equals(h.Key, headerName, StringComparison.OrdinalIgnoreCase));
+                        return header != null ? System.Text.Encoding.UTF8.GetString(header.GetValueBytes()) : null;
+                    }
+
+                    traceParent = GetHeader( "cp_traceparent");
+                    ceType = GetHeader( "ce_type");
+                    ceTime = GetHeader("ce_time");
+                    contentType = GetHeader("content_type");
+                }
+
+                #endregion //  Extract Headers
+
+                using var scp = _scopeFactory.CreateScope();
+                using var activity = OtelExtensions.ACTIVITY_SOURCE.StartActivity("ProcessKafkaMessage");
+                var activityContxt = traceParent.ToTelemetryContext();
+                if( activityContxt != default)
+                {
+                    activity?.AddLink(new ActivityLink(activityContxt));
+                }
+
+                _logger.ProcessingMessage(ceType, ceTime, contentType);
+                //var record = System.Text.Json.JsonSerializer.Deserialize<CloudEvent>(value);
+
                 await Task.Yield(); // Simulate async work
 
                 // Commit offset synchronously

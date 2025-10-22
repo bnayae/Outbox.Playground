@@ -14,6 +14,7 @@ internal static class OtelRegistration
     public static WebApplicationBuilder AddOtel(this WebApplicationBuilder builder)
     {
         var appName = builder.Environment.ApplicationName;
+        var aspireEndpoint = GetAspireDashboardEndpoint();
 
         #region Logging
 
@@ -25,7 +26,18 @@ internal static class OtelRegistration
             logging.SetResourceBuilder(resource.AddService(appName));
             logging.IncludeFormattedMessage = true;
             logging.IncludeScopes = true;
-            logging.AddOtlpExporter();
+            
+            if (!string.IsNullOrEmpty(aspireEndpoint))
+            {
+                logging.AddOtlpExporter(options =>
+                {
+                    options.Endpoint = new Uri(aspireEndpoint);
+                });
+            }
+            else
+            {
+                logging.AddOtlpExporter();
+            }
         });
 
         loggingBuilder.Configure(x =>
@@ -50,17 +62,44 @@ internal static class OtelRegistration
                             o.RecordException = true;
                         })
                         .AddHttpClientInstrumentation(o => o.AddDefaultHttpClientTraceFilters())
+                        .AddSqlClientInstrumentation(o =>
+                        {
+                            o.RecordException = true;
+                        })
                         .SetSampler<AlwaysOnSampler>()
-                        .AddOtlpExporter()
+                        .AddOtlpExporter(options =>
+                        {
+                            if (!string.IsNullOrEmpty(aspireEndpoint))
+                            {
+                                options.Endpoint = new Uri(aspireEndpoint);
+                            }
+                        })
                         )
             .WithMetrics(meterBuilder =>
                 meterBuilder
                             .AddAspNetCoreInstrumentation()
                             .AddHttpClientInstrumentation()
-                            .AddOtlpExporter()
+                            .AddOtlpExporter(options =>
+                            {
+                                if (!string.IsNullOrEmpty(aspireEndpoint))
+                                {
+                                    options.Endpoint = new Uri(aspireEndpoint);
+                                }
+                            })
                         );
 
         return builder;
+    }
+
+    private static string? GetAspireDashboardEndpoint()
+    {
+        // Check for Aspire dashboard endpoint in environment variables
+        // Aspire typically uses this environment variable
+        return Environment.GetEnvironmentVariable("OTEL_EXPORTER_OTLP_ENDPOINT") ??
+               Environment.GetEnvironmentVariable("ASPIRE_DASHBOARD_OTLP_ENDPOINT") ??
+               // Default Aspire dashboard endpoint for local development
+               (Environment.GetEnvironmentVariable("DOTNET_RUNNING_IN_CONTAINER") == null ? 
+                "http://localhost:18889" : null);
     }
 
     private static void AddDefaultNetCoreTraceFilters(this AspNetCoreTraceInstrumentationOptions options)

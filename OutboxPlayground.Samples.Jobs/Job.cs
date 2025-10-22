@@ -1,9 +1,5 @@
-﻿
-using Confluent.Kafka;
+﻿using Confluent.Kafka;
 using OutboxPlayground.Infra.Abstractions;
-using System.Collections.Concurrent;
-using System.Collections.Generic;
-using System.Threading;
 
 namespace OutboxPlayground.Samples.Jobs;
 
@@ -11,19 +7,19 @@ internal class Job : BackgroundService
 {
     private readonly IServiceScopeFactory _scopeFactory;
     private readonly ConsumerConfig _kafkaConfig;
-    private readonly string TOPIC_NAME = "sample-topic"; // TODO: from config
+    private readonly string _topicName;
 
-    public Job(IServiceScopeFactory scopeFactory)
+    public Job(IServiceScopeFactory scopeFactory, IConfiguration configuration)
     {
         _scopeFactory = scopeFactory;
-        _kafkaConfig = GetKafkaConfig(TOPIC_NAME);
-
+        _topicName = configuration["Kafka:TopicName"] ?? throw new ArgumentException("Kafka:TopicName configuration is required");
+        _kafkaConfig = GetKafkaConfig(configuration);
     }
 
     protected async override Task ExecuteAsync(CancellationToken stoppingToken)
     {
         using var consumer = new ConsumerBuilder<string, string>(_kafkaConfig).Build();
-        consumer.Subscribe(TOPIC_NAME);
+        consumer.Subscribe(_topicName);
 
         try
         {
@@ -65,13 +61,15 @@ internal class Job : BackgroundService
 
     #region GetKafkaConfig
 
-    private static ConsumerConfig GetKafkaConfig(string TOPIC_NAME)
+    private ConsumerConfig GetKafkaConfig(IConfiguration configuration)
     {
+        var bootstrapServers = configuration["Kafka:BootstrapServers"] ?? throw new ArgumentException("Kafka:BootstrapServers configuration is required");
+
         ConsumerConfig kafkaConfig = new ConsumerConfig
         {
             Acks = Acks.All, // Ensure all messages are acknowledged
-            BootstrapServers = "localhost:9092", // TODO: from config
-            GroupId = $"test-group-{TOPIC_NAME}",
+            BootstrapServers = bootstrapServers,
+            GroupId = $"test-group-{_topicName}",
             AutoOffsetReset = AutoOffsetReset.Earliest,
             EnableAutoCommit = false, // Disable auto commit to control offsets manually
             EnablePartitionEof = true

@@ -26,8 +26,8 @@
 	"transforms.ExtractKeyField.type": "org.apache.kafka.connect.transforms.ExtractField$Key",
     "transforms.ExtractKeyField.field": "Id",
     "transforms.MoveToHeaders.type": "org.apache.kafka.connect.transforms.HeaderFrom$Value",
-    "transforms.MoveToHeaders.fields": "Id,SpecVersion,Type,Source,Time,DataContentType",
-    "transforms.MoveToHeaders.headers": "ce_id,ce_specversion,ce_type,ce_source,ce_time,content_type",
+    "transforms.MoveToHeaders.fields": "Id,SpecVersion,Type,Source,Time,DataContentType,Subject,DataRef,TraceParent",
+    "transforms.MoveToHeaders.headers": "ce_id,ce_specversion,ce_type,ce_source,ce_time,content_type,ce_subject,cp_dataref,cp_traceparent",
 	"transforms.MoveToHeaders.operation": "move",
     "transforms.RemoveFields.type": "org.apache.kafka.connect.transforms.ReplaceField$Value",
     "transforms.RemoveFields.blacklist": "Id,SpecVersion,Type,Source,Time,DataContentType,DataSchema,Subject,DataRef,TraceParent"

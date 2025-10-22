@@ -3,6 +3,8 @@ using OutboxPlayground.Infra.Abstractions;
 using System.Diagnostics;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions;
+using System.Text.Json;
+using OutboxPlayground.Samples.Abstractions;
 
 namespace OutboxPlayground.Samples.Jobs;
 
@@ -23,7 +25,7 @@ internal class Job : BackgroundService
 
     protected async override Task ExecuteAsync(CancellationToken stoppingToken)
     {
-        using var consumer = new ConsumerBuilder<string, string>(_kafkaConfig).Build();
+        using var consumer = new ConsumerBuilder<string, byte[]>(_kafkaConfig).Build();
         consumer.Subscribe(_topicName);
 
         try
@@ -39,7 +41,7 @@ internal class Job : BackgroundService
                     // End of partition reached, continue to next partition
                     continue;
                 }
-                var value = cr?.Message?.Value;
+                byte[]? value = cr?.Message?.Value;
                 if (value == null)
                 {
                     continue; // or log and skip
@@ -81,12 +83,13 @@ internal class Job : BackgroundService
                     activity?.AddLink(new ActivityLink(activityContxt));
                 }
 
+                var payment = JsonSerializer.Deserialize<PaymentMessage>(value);
+
                 _logger.ProcessingMessage(ceType, ceTime, contentType);
-                //var record = System.Text.Json.JsonSerializer.Deserialize<CloudEvent>(value);
+
 
                 await Task.Yield(); // Simulate async work
 
-                // Commit offset synchronously
                 consumer.Commit(cr);
             }
         }

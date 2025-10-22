@@ -201,7 +201,6 @@ services:
       echo "isActiveSite=true" | kafka-console-producer --broker-list broker:29092 --topic payoneer_sre --property "parse.key=true" --property "key.separator=="
       echo "Record published to topic '\''payoneer_sre'\''."
       '
-
  
   connector-setup:
     image: harbor-docker.payoneer.com/whitelist/confluentinc/cp-server:7.8.0

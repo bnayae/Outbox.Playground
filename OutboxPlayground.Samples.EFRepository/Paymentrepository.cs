@@ -31,7 +31,6 @@ internal class Paymentrepository : IPaymentRepository
         CloudEvent cloudEvent = await _eventBuilder.BuildAsync(message);
         _context.Outbox.Add(cloudEvent);
 
-
         await _context.SaveChangesAsync(cancellationToken);
     }
 }

@@ -363,3 +363,4 @@ MigrationBackup/
 FodyWeavers.xsd
 /global.json
 /tools/docker/kafka/compose.yml
+/tools/docker/kafka/compose.payo.yml

@@ -77,7 +77,7 @@ internal class Job : BackgroundService
 
                 using var scp = _scopeFactory.CreateScope();
                 using var activity = OtelExtensions.ACTIVITY_SOURCE.StartActivity("ProcessKafkaMessage");
-                var activityContxt = traceParent.ToTelemetryContext();
+                ActivityContext activityContxt = traceParent.ToTelemetryContext();
                 if( activityContxt != default)
                 {
                     activity?.AddLink(new ActivityLink(activityContxt));
@@ -85,7 +85,7 @@ internal class Job : BackgroundService
 
                 var payment = JsonSerializer.Deserialize<PaymentMessage>(value);
 
-                _logger.ProcessingMessage(ceType, ceTime, contentType);
+                _logger.LogProcessingMessage(ceType, ceTime, contentType);
 
 
                 await Task.Yield(); // Simulate async work

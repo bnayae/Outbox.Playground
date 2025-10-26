@@ -8,7 +8,7 @@
     "connection.url": "jdbc:sqlserver://host.docker.internal:1433;databaseName=master",
     "connection.user": "sa",
     "connection.password": "MasadNetunim12!@",
-    "table.whitelist": "MyOutbox",
+    "table.whitelist": "Outbox",
     "numeric.mapping": "none",
     "mode": "timestamp",
     "timestamp.column.name": "Time",

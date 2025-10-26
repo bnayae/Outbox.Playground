@@ -6,9 +6,9 @@ namespace OutboxPlayground.Samples.EFRepository;
 /// <summary>
 /// EF Core DbContext for managing payments and outbox events.
 /// </summary>
-internal class PaymentDbContext : DbContext
+internal class PaymentDbMultiOutboxContext : DbContext
 {
-    public PaymentDbContext(DbContextOptions<PaymentDbContext> options) : base(options)
+    public PaymentDbMultiOutboxContext(DbContextOptions<PaymentDbMultiOutboxContext> options) : base(options)
     {
 
     }
@@ -17,7 +17,10 @@ internal class PaymentDbContext : DbContext
 
     public DbSet<User> Users { get; set; }
 
-    public DbSet<CloudEvent> Outbox { get; set; }
+    public DbSet<CloudEvent> Outbox => Set<CloudEvent>("Outbox");
+
+    public DbSet<CloudEvent> HighRiskOutbox => Set<CloudEvent>("HighRiskOutbox"); // sample of multiple outbox within a single context
+
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
@@ -34,6 +37,6 @@ internal class PaymentDbContext : DbContext
             entity.HasKey(p => p.Id);
         });
 
-        modelBuilder.CreatingOutboxModel();
+        modelBuilder.CreatingOutboxModel("Outbox", "HighRiskOutbox");
     }
 }

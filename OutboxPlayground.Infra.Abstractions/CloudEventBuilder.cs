@@ -1,4 +1,5 @@
-﻿using System.Diagnostics;
+﻿using System.Collections.Immutable;
+using System.Diagnostics;
 using System.Text.Json.Serialization;
 
 namespace OutboxPlayground.Infra.Abstractions;
@@ -37,7 +38,7 @@ internal readonly record struct CloudEventBuilder :
     /// - "user-created/v1.0"
     /// </summary>
     [JsonPropertyName("type")]
-    public string Type { get; init; }
+    public string Type { get; init; } = string.Empty;
 
     #endregion // Type
 
@@ -68,7 +69,6 @@ internal readonly record struct CloudEventBuilder :
     /// <summary>
     /// Adds a dataRef schema and its corresponding provider to create a new builder instance.
     /// </summary>
-    /// <param name="dataSchema">The schema identifier</param>
     /// <param name="dataSchemaProvider">The schema provider for serialization</param>
     /// <returns>A new builder instance with schema configuration</returns>
     ICloudEventBuilderSource ICloudEventBuilderSource.AddSchema(IDataSchemaProvider dataSchemaProvider)
@@ -134,6 +134,7 @@ internal readonly record struct CloudEventBuilder :
         }
 
         OtelTraceParent? traceParent = Activity.Current?.SerializeTelemetryContext();
+        byte[] buffer = DataSchemaProvider.Serialize(data);
         return new CloudEvent()
         {
             Type = Type,
@@ -143,7 +144,7 @@ internal readonly record struct CloudEventBuilder :
             DataContentType = DataSchemaProvider.DataContentType,
             DataSchema = dataSchema,
             TraceParent = traceParent,
-            Data = DataSchemaProvider.Serialize(data)
+            Data = buffer
         };
     }
 

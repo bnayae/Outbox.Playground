@@ -1,4 +1,6 @@
-using Microsoft.AspNetCore.Mvc;
+#pragma warning disable CA2201 // Do not raise reserved exception types
+#pragma warning disable S112 // General or reserved exceptions should never be thrown
+
 using Microsoft.Extensions;
 using OutboxPlayground.Samples.Abstractions;
 using OutboxPlayground.Samples.EFSqlServerSample;
@@ -19,10 +21,6 @@ services.AddSingleton<IRiskAssessmentService, RiskAssessmentProxy>(); // just a 
 
 var app = builder.Build();
 
-var scopeFactory = app.Services.GetRequiredService<IServiceScopeFactory>();
-// Auto-apply migrations on startup
-await scopeFactory.BootstrapDatabaseAsync();
-
 // Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())
 {
@@ -39,7 +37,14 @@ app.MapGet("/", () =>
 })
 .WithOpenApi();
 
-app.MapPost("/", async (Payment payment, [FromServices] IPaymentRepository repository) =>
+app.MapPost("/", async (PaymentRequest payment, [FromKeyedServices("default")] IPaymentRepository repository) =>
+{
+    await repository.AddPaymentAsync(payment);
+    return Results.Created();
+})
+.WithOpenApi();
+
+app.MapPost("/multi", async (PaymentRequest payment, [FromKeyedServices("multi-outbox")] IPaymentRepository repository) =>
 {
     await repository.AddPaymentAsync(payment);
     return Results.Created();

@@ -2,9 +2,9 @@
 
 namespace OutboxPlayground.Samples.EFSqlServerSample;
 
-public class RiskAssessmentProxy : IRiskAssessmentService
+public sealed class RiskAssessmentProxy : IRiskAssessmentService
 {
-    async Task<Risk> IRiskAssessmentService.AssessRiskAsync(Payment payment, CancellationToken cancellationToken)
+    async Task<Risk> IRiskAssessmentService.AssessRiskAsync(PaymentRequest payment, CancellationToken cancellationToken)
     {
         await Task.Delay(50, cancellationToken); // Simulate some latency
         return (Risk)(Environment.TickCount % 3);

@@ -3,6 +3,7 @@ name: outbox
 
 services:
 
+ 
   aspire-dashboard:
     # https://learn.microsoft.com/en-us/dotnet/aspire/fundamentals/dashboard/configuration
     image: harbor-docker.payoneer.com/whitelist/mcr.microsoft.com/dotnet/aspire-dashboard:9.3
@@ -17,7 +18,7 @@ services:
       - DASHBOARD__TELEMETRYLIMITS__MAXMETRICCOUNT=1000
       - DOTNET_DASHBOARD_UNSECURED_ALLOW_ANONYMOUS=true
     restart: unless-stopped
-
+    
   # MSSQL
     # MSSQL
   mssql:
@@ -201,6 +202,7 @@ services:
       echo "isActiveSite=true" | kafka-console-producer --broker-list broker:29092 --topic payoneer_sre --property "parse.key=true" --property "key.separator=="
       echo "Record published to topic '\''payoneer_sre'\''."
       '
+
  
   connector-setup:
     image: harbor-docker.payoneer.com/whitelist/confluentinc/cp-server:7.8.0
@@ -219,6 +221,21 @@ services:
         sleep 5;
       done;
       echo "Kafka Connect is ready!";
+            
+      echo "Creating topics if they do not exist...";
+      if kafka-topics --describe --topic applicationevents_Outbox --bootstrap-server broker:29092; then
+          echo "Topic '\''applicationevents_Outbox'\'' already exists."
+      else
+          kafka-topics --create --topic applicationevents_Outbox --bootstrap-server broker:29092 --partitions 1 --replication-factor 1
+          echo "Topic '\''applicationevents_Outbox'\'' created."
+      fi
+              
+      if kafka-topics --describe --topic applicationevents_HighRiskOutbox --bootstrap-server broker:29092; then
+          echo "Topic '\''applicationevents_HighRiskOutbox'\'' already exists."
+      else
+          kafka-topics --create --topic applicationevents_HighRiskOutbox --bootstrap-server broker:29092 --partitions 1 --replication-factor 1
+          echo "Topic '\''applicationevents_HighRiskOutbox'\'' created."
+      fi
       
       echo "Creating MSSQL JDBC Source Connector...";
       curl -s -X POST http://connect:8083/connectors \

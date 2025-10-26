@@ -58,7 +58,7 @@ internal class Job : BackgroundService
                 string? ceTime = null;
                 string? contentType = null;
 
-                if (cr.Message.Headers != null)
+                if (cr?.Message.Headers != null)
                 {
                     string? GetHeader(string headerName)
                     {
@@ -67,7 +67,7 @@ internal class Job : BackgroundService
                         return header != null ? System.Text.Encoding.UTF8.GetString(header.GetValueBytes()) : null;
                     }
 
-                    traceParent = GetHeader( "cp_traceparent");
+                    traceParent = GetHeader( "cp_traceparent") ?? OtelTraceParent.Empty;
                     ceType = GetHeader( "ce_type");
                     ceTime = GetHeader("ce_time");
                     contentType = GetHeader("content_type");
@@ -83,10 +83,10 @@ internal class Job : BackgroundService
                     activity?.AddLink(new ActivityLink(activityContxt));
                 }
 
-                var payment = JsonSerializer.Deserialize<PaymentMessage>(value);
+                PaymentMessage? payment = JsonSerializer.Deserialize<PaymentMessage>(value);
 
                 _logger.LogProcessingMessage(ceType, ceTime, contentType);
-
+                _logger.LogMessageData(payment);
 
                 await Task.Yield(); // Simulate async work
 

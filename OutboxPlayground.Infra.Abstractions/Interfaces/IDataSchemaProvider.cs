@@ -36,8 +36,6 @@ public interface IDataSchemaProvider
 
     #endregion // DataSchemaPrefix
 
-    // TODO: TBD: whether to return the reason for validation failure
-
     /// <summary>
     /// Validates the provided data against the schema.
     /// </summary>

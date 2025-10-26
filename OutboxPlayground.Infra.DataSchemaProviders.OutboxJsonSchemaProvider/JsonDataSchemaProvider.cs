@@ -30,6 +30,7 @@ internal class JsonDataSchemaProvider : IDataSchemaProvider
     /// <summary>
     /// Initializes a new instance of the JsonDataSchemaProvider class.
     /// </summary>
+    /// <param name="dataSchemaPrefix"></param>
     /// <param name="options">Optional JSON serializer options to customize serialization behavior.</param>
     public JsonDataSchemaProvider(string dataSchemaPrefix, JsonSerializerOptions? options = null)
     {

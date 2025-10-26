@@ -1,16 +1,17 @@
 ﻿using OutboxPlayground.Samples.Abstractions;
+
+// docs: https://mapperly.riok.app/docs/getting-started/installation/
 using Riok.Mapperly.Abstractions;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Runtime.ConstrainedExecution;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace OutboxPlayground.Samples.EFRepository;
 
 [Mapper]
-public static partial class MapperExtensions
+internal static partial class MapperExtensions
 {
-    public static partial PaymentMessage ToMessage(this Payment payment, Risk riskAssessment);
+    [MapperIgnoreSource(nameof(PaymentRequest.UserName))]
+    internal static partial PaymentMessage ToMessage(this PaymentRequest payment, Risk riskAssessment);
+
+    [MapperIgnoreSource(nameof(PaymentRequest.UserId))]
+    [MapperIgnoreSource(nameof(PaymentRequest.UserName))]
+    internal static partial PaymentEntity ToEntity(this PaymentRequest payment);
 }

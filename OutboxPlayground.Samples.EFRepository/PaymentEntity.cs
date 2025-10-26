@@ -1,7 +1,6 @@
 ﻿namespace OutboxPlayground.Samples.Abstractions;
 
-
-public record Payment(
+internal record PaymentEntity(
     Guid Id,
     decimal Amount,
     string Currency,

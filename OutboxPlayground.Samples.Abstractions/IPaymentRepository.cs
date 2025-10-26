@@ -2,5 +2,5 @@
 
 public interface IPaymentRepository
 {
-    Task AddPaymentAsync(Payment payment, CancellationToken cancellationToken = default);
+    Task AddPaymentAsync(PaymentRequest payment, CancellationToken cancellationToken = default);
 }

@@ -1,4 +1,7 @@
-﻿using System.Text.Json.Serialization;
+﻿#pragma warning disable CA1707 // Identifiers should not contain underscores
+
+using System.Collections.Immutable;
+using System.Text.Json.Serialization;
 
 namespace OutboxPlayground.Infra.Abstractions;
 

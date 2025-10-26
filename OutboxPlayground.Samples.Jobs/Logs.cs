@@ -11,5 +11,5 @@ internal static partial class Logs
     [LoggerMessage(
         Level = LogLevel.Information,
         Message = "message Data: {payment}")]
-    public static partial void LogMessageData(this ILogger logger, [LogProperties] PaymentMessage payment);
+    public static partial void LogMessageData(this ILogger logger, [LogProperties] PaymentMessage? payment);
 }

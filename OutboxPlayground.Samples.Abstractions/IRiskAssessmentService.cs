@@ -2,5 +2,5 @@
 
 public interface IRiskAssessmentService
 {
-    Task<Risk> AssessRiskAsync(Payment payment, CancellationToken cancellationToken = default);
+    Task<Risk> AssessRiskAsync(PaymentRequest payment, CancellationToken cancellationToken = default);
 }

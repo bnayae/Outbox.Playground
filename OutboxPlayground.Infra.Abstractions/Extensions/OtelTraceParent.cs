@@ -45,7 +45,7 @@ public static class TelemetryPropagatorExtensions
     /// <returns></returns>
     public static ActivityContext ToTelemetryContext(this OtelTraceParent? traceParent, TextMapPropagator? propagator = null)
     {
-        if (traceParent is null || string.IsNullOrEmpty(traceParent))
+        if (traceParent is null || traceParent.Value == OtelTraceParent.Empty || string.IsNullOrEmpty(traceParent))
             return default;
 
         return ActivityContext.TryParse(

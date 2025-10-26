@@ -5,8 +5,6 @@ Accept: application/json
 
 ###
 
-
-
 POST {{OutboxPlayground.Samples.EFSqlServerSample_HostAddress}}/
 Content-Type: application/json
 sessionId: {{$guid}}
@@ -14,6 +12,8 @@ deviceType: Mobile
 
 {
   "id": "{{$guid}}",
+  "userId": "{{$guid}}",
+  "userName": "test-user",
   "amount": 99.99,
   "currency": "USD",
   "paymentMethod": "CreditCard",
@@ -24,6 +24,23 @@ deviceType: Mobile
 
 ###
 
-# Response
+POST {{OutboxPlayground.Samples.EFSqlServerSample_HostAddress}}/multi
+Content-Type: application/json
+sessionId: {{$guid}}
+deviceType: Mobile
+
+{
+  "id": "{{$guid}}",
+  "userId": "{{$guid}}",
+  "userName": "test-user",
+  "amount": 99.99,
+  "currency": "USD",
+  "paymentMethod": "CreditCard",
+  "customerId": "{{$guid}}",
+  "createdAt": "{{$datetime iso8601}}",
+  "status": 0
+}
+
+
 
 

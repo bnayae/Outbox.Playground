@@ -221,6 +221,21 @@ services:
         sleep 5;
       done;
       echo "Kafka Connect is ready!";
+            
+      echo "Creating topics if they do not exist...";
+      if kafka-topics --describe --topic applicationevents_Outbox --bootstrap-server broker:29092; then
+        echo "Topic '\''applicationevents_Outbox'\'' already exists."
+      else
+        kafka-topics --create --topic applicationevents_Outbox --bootstrap-server broker:29092 --partitions 1 --replication-factor 1
+        echo "Topic '\''applicationevents_Outbox'\'' created."
+      fi
+      
+      if kafka-topics --describe --topic applicationevents_HighRiskOutbox --bootstrap-server broker:29092; then
+        echo "Topic '\''applicationevents_HighRiskOutbox'\'' already exists."
+      else
+        kafka-topics --create --topic applicationevents_HighRiskOutbox --bootstrap-server broker:29092 --partitions 1 --replication-factor 1
+        echo "Topic '\''applicationevents_HighRiskOutbox'\'' created."
+      fi
       
       echo "Creating MSSQL JDBC Source Connector...";
       curl -s -X POST http://connect:8083/connectors \

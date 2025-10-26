@@ -139,7 +139,6 @@ internal sealed class AvroDataSchemaProvider : IDataSchemaProvider
         {
             var response = await _schemaRegistry.GetLatestSchemaAsync(subject);
             var schema = Avro.Schema.Parse(response.SchemaString);
-            _logger.SchemaRetrieved(subject, response.Id);
             return schema;
         }
         catch (SchemaRegistryException ex) when (ex.ErrorCode == 40401)

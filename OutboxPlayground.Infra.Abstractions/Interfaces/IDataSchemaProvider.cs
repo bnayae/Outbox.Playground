@@ -37,13 +37,21 @@ public interface IDataSchemaProvider
     #endregion // DataSchemaPrefix
 
     /// <summary>
+    /// Gets a value indicating whether this schema provider supports validation of data against schemas.
+    /// When true, the ValidateAsync method can be used to validate data.
+    /// When false, validation is not supported and ValidateAsync may throw NotSupportedException.
+    /// </summary>
+    bool SupportsValidation { get; }
+
+    /// <summary>
     /// Validates the provided data against the schema.
     /// </summary>
     /// <typeparam name="TData">The type of data to validate</typeparam>
     /// <param name="data">The data to validate</param>
     /// <param name="type">The data type use as schema suffix.</param>
+    /// <param name="dataSchema">Identifies the schema that data adheres to. Incompatible changes to the schema SHOULD be reflected by a different URI.</param>
     /// <returns>True if validation passes, false otherwise</returns>
-    Task<bool> ValidateAsync<TData>(TData data, string type);
+    Task<bool> ValidateAsync<TData>(TData data, string type, string? dataSchema = null);
 
     /// <summary>
     /// Serializes the provided data into a byte array format according to the schema provider's implementation.

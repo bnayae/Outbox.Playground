@@ -32,6 +32,8 @@ internal sealed class AvroDataSchemaProvider : IDataSchemaProvider
     /// </summary>
     string? IDataSchemaProvider.DataSchemaPrefix { get; } = "urn://avro-schema-registry/";
 
+    bool IDataSchemaProvider.SupportsValidation => throw new NotImplementedException();
+
     /// <summary>
     /// Validates the provided data against the Avro schema.
     /// </summary>
@@ -39,7 +41,7 @@ internal sealed class AvroDataSchemaProvider : IDataSchemaProvider
     /// <param name="data">The data to validate</param>
     /// <param name="type">The data type used as schema suffix</param>
     /// <returns>True if validation passes, false otherwise</returns>
-    async Task<bool> IDataSchemaProvider.ValidateAsync<TData>(TData data, string type)
+    async Task<bool> IDataSchemaProvider.ValidateAsync<TData>(TData data, string type, string? dataSchema)
     {
         if (data == null || string.IsNullOrEmpty(type)) return false;
 

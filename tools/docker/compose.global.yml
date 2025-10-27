@@ -213,6 +213,7 @@ services:
       - mssql
     volumes:
       - ./connector_mssql-jdbc-source-connector_outbox_config.json:/tmp/connector_config.json:ro
+      - ./connector_mssql-jdbc-source-connector_outbox_high_rist_config.json:/tmp/connector_high_risk_config.json:ro
     command: >
       bash -c '
       echo "Waiting for Kafka Connect to be ready...";
@@ -241,7 +242,12 @@ services:
       curl -s -X POST http://connect:8083/connectors \
         -H "Content-Type: application/json" \
         -d @/tmp/connector_config.json;
-      
+           
+      echo "Creating MSSQL JDBC Source Connector...";
+      curl -s -X POST http://connect:8083/connectors \
+        -H "Content-Type: application/json" \
+        -d @/tmp/connector_high_risk_config.json;
+ 
       echo "";
       echo "Connector created successfully!";
       echo "Checking connector status...";

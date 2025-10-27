@@ -31,7 +31,7 @@ CREATE TABLE [Outbox] (
     [DataContentType] nvarchar(100) NULL,
     [DataSchema] nvarchar(500) NULL,
     [Subject] nvarchar(255) NULL,
-    [Data] varbinary(max) NULL,
+    [Data] varbinary(4000) NULL,
     [DataRef] nvarchar(1000) NULL,
     [TraceParent] varchar(55) NULL,
     CONSTRAINT [PK_Outbox] PRIMARY KEY ([Id])
@@ -47,7 +47,7 @@ CREATE TABLE [HighRiskOutbox] (
     [DataContentType] nvarchar(100) NULL,
     [DataSchema] nvarchar(500) NULL,
     [Subject] nvarchar(255) NULL,
-    [Data] varbinary(max) NULL,
+    [Data] varbinary(4000) NULL,
     [DataRef] nvarchar(1000) NULL,
     [TraceParent] varchar(55) NULL,
     CONSTRAINT [PK_HighRiskOutbox] PRIMARY KEY ([Id])

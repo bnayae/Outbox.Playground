@@ -27,6 +27,11 @@ public static class OutboxEFExtensions
     /// </remarks>
     public static void CreatingOutboxModel(this ModelBuilder modelBuilder, params string[] tableNames)
     {
+        modelBuilder.CreatingOutboxModel(dataSize: null, tableNames);
+    }
+
+    public static void CreatingOutboxModel(this ModelBuilder modelBuilder, int? dataSize, params string[] tableNames)
+    {
         // Configure CloudEvent entity for outbox pattern
 
         bool hasNames = tableNames != null && tableNames.Length > 0;
@@ -80,10 +85,14 @@ public static class OutboxEFExtensions
             entity.Property(e => e.DataRef)
                   .HasMaxLength(500);
 
+            entity.Property(e => e.Data)
+                  .HasMaxLength(dataSize ?? int.MaxValue);
+
             entity.Property(e => e.TraceParent)
                   .HasMaxLength(55) // W3C Trace Context traceparent format: "00-{32 hex}-{16 hex}-{2 hex}" = 55 chars
                   .HasConversion<string?>(m => m.HasValue ? m.Value : string.Empty, m => string.IsNullOrEmpty(m) ? (OtelTraceParent?)null : OtelTraceParent.From(m)); // Convert OtelTraceParent to/from string for database storage
 
+            
             // Index for efficient querying of outbox events
             entity.HasIndex(e => e.Time);
             entity.HasIndex(e => new { e.Source, e.Type });

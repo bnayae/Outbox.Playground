@@ -18,6 +18,7 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Docker", "Docker", "{C15970
 		tools\docker\compose.payo.yml = tools\docker\compose.payo.yml
 		tools\docker\compose.yml = tools\docker\compose.yml
 		tools\docker\connector_mssql-jdbc-source-connector_outbox_config.json = tools\docker\connector_mssql-jdbc-source-connector_outbox_config.json
+		tools\docker\connector_mssql-jdbc-source-connector_outbox_high_rist_config.json = tools\docker\connector_mssql-jdbc-source-connector_outbox_high_rist_config.json
 		tools\docker\init-db.sql = tools\docker\init-db.sql
 	EndProjectSection
 EndProject

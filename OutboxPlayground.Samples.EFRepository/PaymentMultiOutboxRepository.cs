@@ -41,11 +41,11 @@ internal class PaymentMultiOutboxRepository : IPaymentRepository
 
         Risk risk = await _riskAssessmentService.AssessRiskAsync(payment, cancellationToken);
         _logger.LogRisk(risk, payment.Id);
-        PaymentMessage message  = payment.ToMessage(risk);
+        PaymentMessage message = payment.ToMessage(risk);
         CloudEvent cloudEvent = await _eventBuilder.BuildAsync(message);
         context.Outbox.Add(cloudEvent);
 
-        if(risk == Risk.High)
+        if (risk == Risk.High)
         {
             CloudEvent highRiskEvent = await _eventBuilder.BuildAsync(message);
             context.HighRiskOutbox.Add(highRiskEvent);

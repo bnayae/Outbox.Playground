@@ -45,7 +45,7 @@ public static class OutboxEFExtensions
             }
         }
         else
-        { 
+        {
             var entity = modelBuilder.Entity<CloudEvent>();
             ConfigureEntity(entity);
         }
@@ -92,7 +92,7 @@ public static class OutboxEFExtensions
                   .HasMaxLength(55) // W3C Trace Context traceparent format: "00-{32 hex}-{16 hex}-{2 hex}" = 55 chars
                   .HasConversion<string?>(m => m.HasValue ? m.Value : string.Empty, m => string.IsNullOrEmpty(m) ? (OtelTraceParent?)null : OtelTraceParent.From(m)); // Convert OtelTraceParent to/from string for database storage
 
-            
+
             // Index for efficient querying of outbox events
             entity.HasIndex(e => e.Time);
             entity.HasIndex(e => new { e.Source, e.Type });

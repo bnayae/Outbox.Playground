@@ -34,8 +34,10 @@ internal class PaymentRepository : IPaymentRepository
         context.Users.Add(user);
 
         Risk risk = await _riskAssessmentService.AssessRiskAsync(payment, cancellationToken);
-        PaymentMessage message  = payment.ToMessage(risk);
-        CloudEvent cloudEvent = await _eventBuilder.BuildAsync(message);
+        PaymentMessage message = payment.ToMessage(risk);
+        CloudEvent cloudEvent = await _eventBuilder
+                                            .AddPartition(payment.CustomerId)
+                                            .BuildAsync(payment.Id, message);
         context.Outbox.Add(cloudEvent);
 
         await context.SaveChangesAsync(cancellationToken);

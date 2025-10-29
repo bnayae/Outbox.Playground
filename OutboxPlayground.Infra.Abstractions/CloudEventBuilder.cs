@@ -1,5 +1,4 @@
-﻿using System.Collections.Immutable;
-using System.Diagnostics;
+﻿using System.Diagnostics;
 using System.Text.Json.Serialization;
 
 namespace OutboxPlayground.Infra.Abstractions;
@@ -37,10 +36,21 @@ internal readonly record struct CloudEventBuilder :
     /// Examples:
     /// - "user-created/v1.0"
     /// </summary>
-    [JsonPropertyName("type")]
     public string Type { get; init; } = string.Empty;
 
     #endregion // Type
+
+    #region PartitionKey
+
+    /// <summary>
+    /// Partition Key groups related events together for processing (e.g., by user ID). 
+    /// Used for sharding and maintaining event order per entity. 
+    /// The value should be parse-able by the consumer, and relate to the datacontenttype. 
+    /// a JSON should use JSONPath, Avro should use dot notation.
+    /// </summary>
+    public string PartitionKey { get; init; } = Guid.NewGuid().ToString();
+
+    #endregion // PartitionKey
 
     #region Source
 
@@ -89,6 +99,28 @@ internal readonly record struct CloudEventBuilder :
 
     #endregion //  AddType
 
+    #region AddPartition
+
+    /// <summary>
+    /// Partition Key groups related events together for processing (e.g., by user ID). 
+    /// Used for sharding and maintaining event order per entity. 
+    /// The value should be parse-able by the consumer, and relate to the datacontenttype. 
+    /// a JSON should use JSONPath, Avro should use dot notation.
+    /// </summary>
+    /// <typeparam name="TPartition"></typeparam>
+    /// <param name="partitionKey"></param>
+    /// <returns></returns>
+    ICloudEventBuilder ICloudEventBuilder.AddPartition<TPartition>(TPartition partitionKey)
+    {
+        return this with 
+                    { 
+                        PartitionKey = partitionKey?.ToString() 
+                                                   ?? Guid.NewGuid().ToString()
+                    };
+    }
+
+    #endregion //  AddPartition
+
     #region Build
 
     /// <summary>
@@ -96,12 +128,16 @@ internal readonly record struct CloudEventBuilder :
     /// </summary>
     /// <typeparam name="TData">The type of the dataRef payload</typeparam>
     /// <param name="data">The dataRef to include in the event</param>
+    /// <param name="sequence">
+    /// Ordering indicator for events. Monotonically increasing value to determine event sequence within a chain.
+    /// </param>
     /// <returns>A new CloudEvent instance</returns>
-    async Task<CloudEvent> ICloudEventBuilder.BuildAsync<TData>(TData data)
+    async Task<CloudEvent> ICloudEventBuilder.BuildAsync<TData>(TData data,
+                                                                long? sequence)
     {
         ICloudEventBuilder self = this;
         var id = Guid.NewGuid();
-        return await self.BuildAsync(id, data);
+        return await self.BuildAsync(id, data, sequence);
     }
 
     /// <summary>
@@ -111,9 +147,14 @@ internal readonly record struct CloudEventBuilder :
     /// <typeparam name="TData">The type of the dataRef payload</typeparam>
     /// <param name="id">The unique identifier for the event</param>
     /// <param name="data">The dataRef payload</param>
+    /// <param name="sequence">
+    /// Ordering indicator for events. Monotonically increasing value to determine event sequence within a chain.
+    /// </param>
     /// <returns>A new CloudEvent instance</returns>
     /// <exception cref="ArgumentNullException">Thrown when id is null</exception>
-    async Task<CloudEvent> ICloudEventBuilder.BuildAsync<TId, TData>(TId id, TData data)
+    async Task<CloudEvent> ICloudEventBuilder.BuildAsync<TId, TData>(TId id,
+                                                                     TData data,
+                                                                     long? sequence)
     {
         #region Validation
 
@@ -144,6 +185,8 @@ internal readonly record struct CloudEventBuilder :
             DataContentType = DataSchemaProvider.DataContentType,
             DataSchema = dataSchema,
             TraceParent = traceParent,
+            PartitionKey = PartitionKey,
+            Sequence = sequence,
             Data = buffer
         };
     }
@@ -156,12 +199,15 @@ internal readonly record struct CloudEventBuilder :
     /// Builds a CloudEvent with auto-generated ID and a dataRef reference.
     /// </summary>
     /// <param name="dataRef">The reference URL to external dataRef location</param>
+    /// <param name="sequence">
+    /// Ordering indicator for events. Monotonically increasing value to determine event sequence within a chain.
+    /// </param>
     /// <returns>A new CloudEvent instance with dataRef reference</returns>
-    CloudEvent ICloudEventBuilder.DataRefBuild(string dataRef)
+    CloudEvent ICloudEventBuilder.DataRefBuild(string dataRef, long? sequence)
     {
         ICloudEventBuilder self = this;
         var id = Guid.NewGuid();
-        return self.DataRefBuild(id, dataRef);
+        return self.DataRefBuild(id, dataRef, sequence);
     }
 
     /// <summary>
@@ -171,8 +217,11 @@ internal readonly record struct CloudEventBuilder :
     /// <param name="id">The unique identifier for the event</param>
     /// <param name="dataRef">The reference URL to external data location</param>
     /// <returns>A new CloudEvent instance with dataRef reference</returns>
+    /// <param name="sequence">
+    /// Ordering indicator for events. Monotonically increasing value to determine event sequence within a chain.
+    /// </param>
     /// <exception cref="ArgumentNullException">Thrown when id is null</exception>
-    CloudEvent ICloudEventBuilder.DataRefBuild<TId>(TId id, string dataRef)
+    CloudEvent ICloudEventBuilder.DataRefBuild<TId>(TId id, string dataRef, long? sequence)
     {
         OtelTraceParent? traceParent = Activity.Current?.SerializeTelemetryContext();
         return new CloudEvent()
@@ -182,6 +231,8 @@ internal readonly record struct CloudEventBuilder :
             Id = id?.ToString() ?? throw new ArgumentNullException(nameof(id)),
             Time = _timeProvider.GetUtcNow(),
             TraceParent = traceParent,
+            PartitionKey = PartitionKey,
+            Sequence = sequence,
             DataRef = dataRef
         };
     }

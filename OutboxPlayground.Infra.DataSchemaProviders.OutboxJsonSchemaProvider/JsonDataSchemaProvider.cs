@@ -19,7 +19,7 @@ internal class JsonDataSchemaProvider : IDataSchemaProvider
 
     string? IDataSchemaProvider.DataSchemaPrefix => _dataSchemaPrefix;
 
-    bool IDataSchemaProvider.SupportsValidation { get; } 
+    bool IDataSchemaProvider.SupportsValidation { get; }
 
     /// <summary>
     /// Initializes a new instance of the JsonDataSchemaProvider class.

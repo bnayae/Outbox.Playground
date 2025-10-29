@@ -11,7 +11,7 @@
     "table.whitelist": "HighRiskOutbox",
     "numeric.mapping": "none",
     "mode": "timestamp",
-    "timestamp.column.name": "Time",
+    "timestamp.column.name": "CreateDateUtc",
     "timestamp.delay.interval.ms": "0",
     "validate.non.null": "false",
     "topic.prefix": "applicationevents_",
@@ -24,7 +24,7 @@
     "value.converter.schemas.enable": "false",
     "transforms": "CreateKey,ExtractKeyField,MoveToHeaders,RemoveFields,ExtractData",
     "transforms.CreateKey.type": "org.apache.kafka.connect.transforms.ValueToKey",
-    "transforms.CreateKey.fields": "Id",
+    "transforms.CreateKey.fields": "PartitionKey",
     "transforms.ExtractKeyField.type": "org.apache.kafka.connect.transforms.ExtractField$Key",
     "transforms.ExtractKeyField.field": "Id",
     "transforms.MoveToHeaders.type": "org.apache.kafka.connect.transforms.HeaderFrom$Value",
@@ -32,7 +32,7 @@
     "transforms.MoveToHeaders.headers": "ce_id,ce_specversion,ce_type,ce_source,ce_time,content_type,ce_subject,cp_dataref,cp_traceparent",
     "transforms.MoveToHeaders.operation": "move",
     "transforms.RemoveFields.type": "org.apache.kafka.connect.transforms.ReplaceField$Value",
-    "transforms.RemoveFields.blacklist": "Id,SpecVersion,Type,Source,Time,DataContentType,DataSchema,Subject,DataRef,TraceParent",
+    "transforms.RemoveFields.blacklist": "Id,SpecVersion,Type,Source,Time,DataContentType,DataSchema,Subject,DataRef,TraceParent,CreateDateUtc,PartitionKey,Sequence",
     "transforms.ExtractData.type": "org.apache.kafka.connect.transforms.ExtractField$Value",
     "transforms.ExtractData.field": "Data"
   }

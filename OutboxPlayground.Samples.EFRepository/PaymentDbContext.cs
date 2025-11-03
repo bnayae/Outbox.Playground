@@ -17,6 +17,7 @@ internal class PaymentDbContext : DbContext
 
     public DbSet<User> Users { get; set; }
 
+    // Outbox table for storing events to be published
     public DbSet<CloudEvent> Outbox { get; set; }
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
@@ -34,6 +35,7 @@ internal class PaymentDbContext : DbContext
             entity.HasKey(p => p.Id);
         });
 
+        // Configure Outbox entity 
         modelBuilder.CreatingOutboxModel();
     }
 }

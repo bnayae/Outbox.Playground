@@ -175,7 +175,7 @@ internal readonly record struct CloudEventBuilder :
         }
 
         OtelTraceParent? traceParent = Activity.Current?.SerializeTelemetryContext();
-        byte[] buffer = DataSchemaProvider.Serialize(data);
+        byte[] buffer = await DataSchemaProvider.SerializeAsync(data);
         return new CloudEvent()
         {
             Type = Type,

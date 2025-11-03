@@ -36,6 +36,7 @@ CREATE TABLE [Outbox] (
     [DataRef] varchar(500) NULL, -- check S3 limitation
     [TraceParent] char(55) NULL,
     [Sequence] BIGINT NULL,
+    -- incremental (identity)
     [PartitionKey] varchar(400) NOT NULL,
     CONSTRAINT [PK_Outbox] PRIMARY KEY ([Id], [Source])
 );

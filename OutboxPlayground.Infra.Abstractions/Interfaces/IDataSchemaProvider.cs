@@ -59,6 +59,6 @@ public interface IDataSchemaProvider
     /// <typeparam name="TData">The type of data to serialize</typeparam>
     /// <param name="data">The data to serialize</param>
     /// <returns>Serialized data as byte array</returns>
-    byte[] Serialize<TData>(TData data);
+    Task<byte[]> SerializeAsync<TData>(TData data);
 }
 

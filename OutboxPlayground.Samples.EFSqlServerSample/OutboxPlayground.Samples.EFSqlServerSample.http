@@ -33,7 +33,7 @@ deviceType: Mobile
   "id": "{{$guid}}",
   "userId": "{{$guid}}",
   "userName": "test-user",
-  "amount": 99.99,
+  "amount": 99.999,
   "currency": "USD",
   "paymentMethod": "CreditCard",
   "customerId": "{{$guid}}",

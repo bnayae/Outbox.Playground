@@ -24,33 +24,41 @@ CREATE TABLE Users (
 -- Create Outbox table (CloudEvent outbox table)
 CREATE TABLE [Outbox] (
     [Id] nvarchar(450) NOT NULL,
-    [SpecVersion] nvarchar(10) NOT NULL,
-    [Type] nvarchar(255) NOT NULL,
-    [Source] nvarchar(255) NOT NULL,
+    [SpecVersion] varchar(10) NOT NULL,
+    [Type] varchar(255) NOT NULL,
+    [Source] varchar(255) NOT NULL,
     [Time] datetimeoffset NOT NULL,
-    [DataContentType] nvarchar(100) NULL,
-    [DataSchema] nvarchar(500) NULL,
+    [CreateDateUtc] datetimeoffset NOT NULL DEFAULT SYSDATETIMEOFFSET(), -- for partition
+    [DataContentType] varchar(100) NULL,
+    [DataSchema] varchar(255) NULL,
     [Subject] nvarchar(255) NULL,
-    [Data] varbinary(4000) NULL,
-    [DataRef] nvarchar(1000) NULL,
-    [TraceParent] varchar(55) NULL,
-    CONSTRAINT [PK_Outbox] PRIMARY KEY ([Id])
+    [Data] varbinary(4000) NULL,  -- Kafka Size Limit is 1MB
+    [DataRef] varchar(500) NULL, -- check S3 limitation
+    [TraceParent] char(55) NULL,
+    [Sequence] BIGINT NULL,
+    [AutoSequence] BIGINT IDENTITY(1,1) NOT NULL,
+    [PartitionKey] varchar(400) NOT NULL,
+    CONSTRAINT [PK_Outbox] PRIMARY KEY ([Id], [Source])
 );
 
 -- Create HighRiskOutbox table (CloudEvent outbox table)
 CREATE TABLE [HighRiskOutbox] (
     [Id] nvarchar(450) NOT NULL,
-    [SpecVersion] nvarchar(10) NOT NULL,
-    [Type] nvarchar(255) NOT NULL,
-    [Source] nvarchar(255) NOT NULL,
+    [SpecVersion] varchar(10) NOT NULL,
+    [Type] varchar(255) NOT NULL,
+    [Source] varchar(255) NOT NULL,
     [Time] datetimeoffset NOT NULL,
-    [DataContentType] nvarchar(100) NULL,
-    [DataSchema] nvarchar(500) NULL,
+    [CreateDateUtc] datetimeoffset NOT NULL DEFAULT SYSDATETIMEOFFSET(), -- for partition
+    [DataContentType] varchar(100) NULL,
+    [DataSchema] varchar(255) NULL,
     [Subject] nvarchar(255) NULL,
-    [Data] varbinary(4000) NULL,
-    [DataRef] nvarchar(1000) NULL,
-    [TraceParent] varchar(55) NULL,
-    CONSTRAINT [PK_HighRiskOutbox] PRIMARY KEY ([Id])
+    [Data] varbinary(4000) NULL,  -- Kafka Size Limit is 1MB
+    [DataRef] varchar(500) NULL, -- check S3 limitation
+    [TraceParent] char(55) NULL,
+    [Sequence] BIGINT NULL,
+    [AutoSequence] BIGINT IDENTITY(1,1) NOT NULL,
+    [PartitionKey] varchar(400) NOT NULL,
+    CONSTRAINT [PK_HighRiskOutbox] PRIMARY KEY ([Id], [Source])
 );
 
 -- Add indexes for better performance

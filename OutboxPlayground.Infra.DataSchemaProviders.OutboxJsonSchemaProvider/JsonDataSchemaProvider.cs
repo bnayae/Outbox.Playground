@@ -19,7 +19,7 @@ internal class JsonDataSchemaProvider : IDataSchemaProvider
 
     string? IDataSchemaProvider.DataSchemaPrefix => _dataSchemaPrefix;
 
-    bool IDataSchemaProvider.SupportsValidation { get; } 
+    bool IDataSchemaProvider.SupportsValidation { get; }
 
     /// <summary>
     /// Initializes a new instance of the JsonDataSchemaProvider class.
@@ -46,17 +46,19 @@ internal class JsonDataSchemaProvider : IDataSchemaProvider
     /// <typeparam name="TData">The type of data to validate</typeparam>
     /// <param name="data">The data to validate</param>
     /// <param name="type">The data type use as schema suffix.</param>
+    /// <param name="dataSchema"></param>
     /// <returns>True if validation passes, false otherwise</returns>
+#pragma warning disable CS8769 // Nullability of reference types in type of parameter doesn't match implemented member (possibly because of nullability attributes).
     async Task<bool> IDataSchemaProvider.ValidateAsync<TData>(TData data, string type, string dataSchema)
     {
         // For JSON schema provider, we perform basic validation by attempting serialization
-        // TODO: validate against a JSON schema if needed (plus schema cache)
         if (!string.IsNullOrEmpty(type) && !string.IsNullOrEmpty(_dataSchemaPrefix))
         {
             await Task.Yield();
         }
         return true;
     }
+#pragma warning restore CS8769 // Nullability of reference types in type of parameter doesn't match implemented member (possibly because of nullability attributes).
 
     /// <summary>
     /// Serializes the provided data into a UTF-8 encoded JSON byte array.
@@ -64,8 +66,9 @@ internal class JsonDataSchemaProvider : IDataSchemaProvider
     /// <typeparam name="TData">The type of data to serialize.</typeparam>
     /// <param name="data">The data to serialize.</param>
     /// <returns>Serialized data as a UTF-8 encoded JSON byte array.</returns>
-    byte[] IDataSchemaProvider.Serialize<TData>(TData data)
+    Task<byte[]> IDataSchemaProvider.SerializeAsync<TData>(TData data)
     {
-        return JsonSerializer.SerializeToUtf8Bytes(data, _options);
+        var buffer = JsonSerializer.SerializeToUtf8Bytes(data, _options);
+        return Task.FromResult(buffer);
     }
 }

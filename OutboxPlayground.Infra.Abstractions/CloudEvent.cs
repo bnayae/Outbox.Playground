@@ -1,6 +1,5 @@
 ﻿#pragma warning disable CA1707 // Identifiers should not contain underscores
 
-using System.Collections.Immutable;
 using System.Text.Json.Serialization;
 
 namespace OutboxPlayground.Infra.Abstractions;
@@ -151,6 +150,27 @@ public record CloudEvent
 
     #endregion // TraceParent
 
+    #region Sequence
+
+    /// <summary>
+    /// Ordering indicator for events. Monotonically increasing value to determine event sequence within a chain.
+    /// </summary>
+    public long? Sequence { get; init; }
+
+    #endregion //  Sequence
+
+    #region PartitionKey
+
+    /// <summary>
+    /// Groups related events together for processing (e.g., by user ID). 
+    /// Used for sharding and maintaining event order per entity. 
+    /// The value should be parsable by the consumer, and relate to the datacontenttype. 
+    /// a JSON should use JSONPath, Avro should use dot notation.
+    /// </summary>
+    [JsonPropertyName("partitionkey")]
+    public required string PartitionKey { get; init; }
+
+    #endregion //  PartitionKey
 
     /// <summary>
     /// Creates a new CloudEventBuilder instance for building CloudEvents with the specified source.

@@ -36,7 +36,7 @@ internal static class OtelExtensions
             logging.SetResourceBuilder(resource.AddService(appName));
             logging.IncludeFormattedMessage = true;
             logging.IncludeScopes = true;
-            
+
             if (!string.IsNullOrEmpty(aspireEndpoint))
             {
                 logging.AddOtlpExporter(options =>
@@ -109,7 +109,7 @@ internal static class OtelExtensions
         return Environment.GetEnvironmentVariable("OTEL_EXPORTER_OTLP_ENDPOINT") ??
                Environment.GetEnvironmentVariable("ASPIRE_DASHBOARD_OTLP_ENDPOINT") ??
                // Default Aspire dashboard endpoint for local development
-               (Environment.GetEnvironmentVariable("DOTNET_RUNNING_IN_CONTAINER") == null ? 
+               (Environment.GetEnvironmentVariable("DOTNET_RUNNING_IN_CONTAINER") == null ?
                 "http://localhost:18889" : null);
     }
 

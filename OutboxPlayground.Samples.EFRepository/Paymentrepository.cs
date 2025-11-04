@@ -24,9 +24,10 @@ internal class PaymentRepository : IPaymentRepository
 
     async Task IPaymentRepository.AddPaymentAsync(PaymentRequest payment, CancellationToken cancellationToken)
     {
-        using var activity = RepositoryOtelExtensions.ACTIVITY_SOURCE.StartActivity();
-        PaymentDbContext context = await _contextFactory.CreateDbContextAsync(cancellationToken);
+        using var activity = RepositoryOtelExtensions.ACTIVITY_SOURCE.StartActivity(); // OTEL Tracing
+        PaymentDbContext context = await _contextFactory.CreateDbContextAsync(cancellationToken); // EF Context
 
+        // Bussiness Logic
         PaymentEntity paymentEntity = payment.ToEntity();
         context.Payments.Add(paymentEntity);
 
@@ -34,9 +35,16 @@ internal class PaymentRepository : IPaymentRepository
         context.Users.Add(user);
 
         Risk risk = await _riskAssessmentService.AssessRiskAsync(payment, cancellationToken);
-        PaymentMessage message  = payment.ToMessage(risk);
-        CloudEvent cloudEvent = await _eventBuilder.BuildAsync(message);
+        PaymentMessage message = payment.ToMessage(risk);
+
+        // Outbox Pattern
+        CloudEvent cloudEvent = await _eventBuilder
+                                            .AddPartition(payment.CustomerId)
+                                            .BuildAsync(payment.Id, message);
         context.Outbox.Add(cloudEvent);
+        // End outbox pattern
+
+        // EF practice to save all changes in a single transaction
 
         await context.SaveChangesAsync(cancellationToken);
     }

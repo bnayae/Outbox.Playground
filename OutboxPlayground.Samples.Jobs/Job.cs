@@ -1,10 +1,9 @@
 ﻿using Confluent.Kafka;
-using OutboxPlayground.Infra.Abstractions;
-using System.Diagnostics;
-using Microsoft.Extensions.Logging;
 using Microsoft.Extensions;
-using System.Text.Json;
+using OutboxPlayground.Infra.Abstractions;
 using OutboxPlayground.Samples.Abstractions;
+using System.Diagnostics;
+using System.Text.Json;
 
 namespace OutboxPlayground.Samples.Jobs;
 
@@ -62,13 +61,13 @@ internal class Job : BackgroundService
                 {
                     string? GetHeader(string headerName)
                     {
-                        var header = cr.Message.Headers.FirstOrDefault(h => 
+                        var header = cr.Message.Headers.FirstOrDefault(h =>
                             string.Equals(h.Key, headerName, StringComparison.OrdinalIgnoreCase));
                         return header != null ? System.Text.Encoding.UTF8.GetString(header.GetValueBytes()) : null;
                     }
 
-                    traceParent = GetHeader( "cp_traceparent") ?? OtelTraceParent.Empty;
-                    ceType = GetHeader( "ce_type");
+                    traceParent = GetHeader("cp_traceparent") ?? OtelTraceParent.Empty;
+                    ceType = GetHeader("ce_type");
                     ceTime = GetHeader("ce_time");
                     contentType = GetHeader("content_type");
                 }
@@ -78,7 +77,7 @@ internal class Job : BackgroundService
                 using var scp = _scopeFactory.CreateScope();
                 using var activity = OtelExtensions.ACTIVITY_SOURCE.StartActivity("ProcessKafkaMessage");
                 ActivityContext activityContxt = traceParent.ToTelemetryContext();
-                if( activityContxt != default)
+                if (activityContxt != default)
                 {
                     activity?.AddLink(new ActivityLink(activityContxt));
                 }

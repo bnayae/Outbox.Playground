@@ -16,7 +16,10 @@ services.AddSwaggerGen();
 var connStr = builder.Configuration.GetConnectionString("PaymentConnection") ?? throw new Exception("PaymentConnection not found");
 services.AddPaymentRepository(connStr);
 builder.AddOtel();
-services.AddJsonDataSchemaProvider();
+
+// services.AddJsonDataSchemaProvider();
+services.AddAvroEmbeddedDataSchemaProvider();
+
 services.AddSingleton<IRiskAssessmentService, RiskAssessmentProxy>(); // just a sample
 
 var app = builder.Build();

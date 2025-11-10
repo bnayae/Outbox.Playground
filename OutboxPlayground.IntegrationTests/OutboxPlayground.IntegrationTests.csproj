@@ -1,4 +1,4 @@
-<Project Sdk="Microsoft.NET.Sdk">
+﻿<Project Sdk="Microsoft.NET.Sdk">
 
 	<PropertyGroup>
 		<IsPackable>false</IsPackable>
@@ -25,6 +25,8 @@
 		<!-- Entity Framework -->
 		<PackageReference Include="Microsoft.EntityFrameworkCore.InMemory" Version="8.0.21" />
 
+		<!--<PackageReference Include="Apache.Avro" Version="1.11.3" />-->
+
 		<!-- Kafka Client -->
 		<PackageReference Include="Confluent.Kafka" Version="2.6.1" />
 
@@ -39,9 +41,12 @@
 	</ItemGroup>
 
 	<ItemGroup>
-		<ProjectReference Include="..\OutboxPlayground.Samples.EFRepository\OutboxPlayground.Samples.EFRepository.csproj" />
-		<ProjectReference Include="..\OutboxPlayground.Infra.DataSchemaProviders.OutboxJsonSchemaProvider\OutboxPlayground.Infra.DataSchemaProviders.OutboxJsonSchemaProvider.csproj" />
 		<PackageReference Include="..\OutboxPlayground.Samples.Abstractions\OutboxPlayground.Samples.Abstractions.csproj" />
+	</ItemGroup>
+
+	<ItemGroup>
+	  <ProjectReference Include="..\OutboxPlayground.Infra.DataSchemaProviders.OutboxAvroSchemaProvider\OutboxPlayground.Infra.DataSchemaProviders.OutboxAvroSchemaProvider.csproj" />
+	  <ProjectReference Include="..\OutboxPlayground.Infra.DataSchemaProviders.OutboxJsonSchemaProvider\OutboxPlayground.Infra.DataSchemaProviders.OutboxJsonSchemaProvider.csproj" />
 	</ItemGroup>
 
 </Project>

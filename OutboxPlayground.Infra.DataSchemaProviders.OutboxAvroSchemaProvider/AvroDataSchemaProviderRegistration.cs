@@ -1,3 +1,5 @@
+// Ignore Spelling: Avro
+
 using Confluent.SchemaRegistry;
 using OutboxPlayground.Infra.Abstractions;
 
@@ -7,7 +9,7 @@ namespace Microsoft.Extensions.DependencyInjection;
 
 public static class AvroDataSchemaProviderRegistration
 {
-    public static IServiceCollection AddAvroDataSchemaProvider(this IServiceCollection services,
+    public static IServiceCollection AddAvroEmbeddedDataSchemaProvider(this IServiceCollection services,
                                                                string? schemaRegistryUrl = null)
     {
         services.AddSingleton<ISchemaRegistryClient>(_ =>
@@ -16,8 +18,8 @@ public static class AvroDataSchemaProviderRegistration
                 Url = schemaRegistryUrl ?? "http://localhost:8081"
             }));
 
-        services.AddSingleton<IDataSchemaProvider, AvroDataSchemaProvider>();
-        services.AddKeyedSingleton<IDataSchemaProvider>("application/avro", (sp, _) => sp.GetRequiredService<IDataSchemaProvider>());
+        services.AddSingleton<IDataSchemaProvider, AvroEmbeddedDataSchemaProvider>();
+        services.AddKeyedSingleton(AvroEmbeddedDataSchemaProvider.DATA_CONTENT_TYPE, (sp, _) => sp.GetRequiredService<IDataSchemaProvider>());
 
         return services;
     }

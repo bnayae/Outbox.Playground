@@ -17,7 +17,7 @@ var connStr = builder.Configuration.GetConnectionString("PaymentConnection") ?? 
 services.AddPaymentRepository(connStr);
 builder.AddOtel();
 
-//services.AddJsonDataSchemaProvider();
+// services.AddJsonDataSchemaProvider();
 services.AddAvroEmbeddedDataSchemaProvider();
 
 services.AddSingleton<IRiskAssessmentService, RiskAssessmentProxy>(); // just a sample

@@ -11,7 +11,7 @@ namespace OutboxPlayground.Infra.DataSchemaProviders.OutboxAvroSchemaProvider;
 /// </summary>
 internal sealed class AvroEmbeddedDataSchemaProvider : IDataSchemaProvider
 {
-    internal const string DATA_CONTENT_TYPE = "application/json-embedded";
+    internal const string DATA_CONTENT_TYPE = "application/avro-embedded";
 
     //private readonly ISchemaRegistryClient _schemaRegistry;
     private readonly string _dataSchemaPrefix;

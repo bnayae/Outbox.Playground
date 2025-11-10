@@ -1,4 +1,5 @@
-﻿using Confluent.Kafka;
+﻿using Avro;
+using Confluent.Kafka;
 using Microsoft.Extensions;
 using OutboxPlayground.Infra.Abstractions;
 using OutboxPlayground.Samples.Abstractions;
@@ -82,7 +83,12 @@ internal class Job : BackgroundService
                     activity?.AddLink(new ActivityLink(activityContxt));
                 }
 
-                PaymentMessage? payment = JsonSerializer.Deserialize<PaymentMessage>(value);
+
+                PaymentMessage? payment = contentType switch
+                {
+                    "application/avro" => value.DeserializeISpecificRecord<PaymentMessage>(),
+                    _ => JsonSerializer.Deserialize<PaymentMessage>(value)
+                };
 
                 _logger.LogProcessingMessage(ceType, ceTime, contentType);
                 _logger.LogMessageData(payment);

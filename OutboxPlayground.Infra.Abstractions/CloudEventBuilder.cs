@@ -112,11 +112,11 @@ internal readonly record struct CloudEventBuilder :
     /// <returns></returns>
     ICloudEventBuilder ICloudEventBuilder.AddPartition<TPartition>(TPartition partitionKey)
     {
-        return this with 
-                    { 
-                        PartitionKey = partitionKey?.ToString() 
+        return this with
+        {
+            PartitionKey = partitionKey?.ToString()
                                                    ?? Guid.NewGuid().ToString()
-                    };
+        };
     }
 
     #endregion //  AddPartition

@@ -15,6 +15,7 @@
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\OutboxPlayground.Infra.DataSchemaProviders.OutboxAvroSchemaProvider\OutboxPlayground.Infra.DataSchemaProviders.OutboxAvroSchemaProvider.csproj" />
     <ProjectReference Include="..\OutboxPlayground.Infra.DataSchemaProviders.OutboxJsonSchemaProvider\OutboxPlayground.Infra.DataSchemaProviders.OutboxJsonSchemaProvider.csproj" />
     <ProjectReference Include="..\OutboxPlayground.Samples.EFRepository\OutboxPlayground.Samples.EFRepository.csproj" />
   </ItemGroup>

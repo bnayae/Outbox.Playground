@@ -29,6 +29,7 @@
 	
 	<ItemGroup>
 	  <ProjectReference Include="..\OutboxPlayground.Infra.Abstractions\OutboxPlayground.Infra.Abstractions.csproj" />
+	  <ProjectReference Include="..\OutboxPlayground.Infra.AvroHelpers\OutboxPlayground.Infra.AvroHelpers.csproj" />
 	  <ProjectReference Include="..\OutboxPlayground.Samples.Abstractions\OutboxPlayground.Samples.Abstractions.csproj" />
 	</ItemGroup>
 

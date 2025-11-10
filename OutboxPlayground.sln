@@ -50,6 +50,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "OutboxPlayground.Infra.Cont
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "OutboxPlayground.IntegrationTests", "OutboxPlayground.IntegrationTests\OutboxPlayground.IntegrationTests.csproj", "{06A077FF-4A1F-4F75-826B-0BCFEA732A42}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "OutboxPlayground.Infra.AvroHelpers", "OutboxPlayground.Infra.AvroHelpers\OutboxPlayground.Infra.AvroHelpers.csproj", "{F2C1B3DD-2804-4228-B7D0-BDF175466DB3}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -96,6 +98,10 @@ Global
 		{06A077FF-4A1F-4F75-826B-0BCFEA732A42}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{06A077FF-4A1F-4F75-826B-0BCFEA732A42}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{06A077FF-4A1F-4F75-826B-0BCFEA732A42}.Release|Any CPU.Build.0 = Release|Any CPU
+		{F2C1B3DD-2804-4228-B7D0-BDF175466DB3}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{F2C1B3DD-2804-4228-B7D0-BDF175466DB3}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{F2C1B3DD-2804-4228-B7D0-BDF175466DB3}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{F2C1B3DD-2804-4228-B7D0-BDF175466DB3}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -112,6 +118,7 @@ Global
 		{08884C4D-AB1E-4182-9F23-8E680905640C} = {135BAA56-DC54-4A82-9F09-6D546C5D1BFB}
 		{90B97C9A-8A73-4D6C-BE69-E82812997D6E} = {08B43F61-B202-4051-B578-F542437699D7}
 		{06A077FF-4A1F-4F75-826B-0BCFEA732A42} = {A5C07D83-BDF7-4B8F-B164-1A0CF3314448}
+		{F2C1B3DD-2804-4228-B7D0-BDF175466DB3} = {08B43F61-B202-4051-B578-F542437699D7}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {1F26719C-6C74-4F13-9C9C-9B88C7CDDFC8}

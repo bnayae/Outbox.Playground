@@ -76,17 +76,22 @@ public record PaymentMessage : ISpecificRecord
 
     object ISpecificRecord.Get(int fieldPos)
     {
+        // Return Avro-compatible primitive values:
+        // - GUIDs as strings (Avro schema uses "string")
+        // - decimal Amount as double (schema "double")
+        // - CreatedAt as unix epoch milliseconds (schema "long")
+        // - Enums as their symbol string (Avro enum expects symbol)
         return fieldPos switch
         {
-            0 => Id,
-            1 => UserId,
-            2 => Amount,
+            0 => Id.ToString(),
+            1 => UserId.ToString(),
+            2 => Convert.ToDouble(Amount),
             3 => Currency,
             4 => PaymentMethod,
-            5 => CustomerId,
-            6 => CreatedAt,
-            7 => Status,
-            8 => RiskAssessment,
+            5 => CustomerId.ToString(),
+            6 => new DateTimeOffset(CreatedAt.ToUniversalTime()).ToUnixTimeMilliseconds(),
+            7 => Status.ToString(),
+            8 => RiskAssessment.ToString(),
             _ => throw new AvroRuntimeException("Bad index " + fieldPos)
         };
     }

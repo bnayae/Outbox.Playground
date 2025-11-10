@@ -5,6 +5,7 @@ using OutboxPlayground.Infra.Abstractions;
 using OutboxPlayground.Samples.Abstractions;
 using System.Diagnostics;
 using System.Text.Json;
+using OutboxPlayground.Infra.DataSchemaProviders.OutboxAvroSchemaProvider;
 
 namespace OutboxPlayground.Samples.Jobs;
 
@@ -86,7 +87,7 @@ internal class Job : BackgroundService
 
                 PaymentMessage? payment = contentType switch
                 {
-                    "application/avro" => value.DeserializeISpecificRecord<PaymentMessage>(),
+                    AvroEmbeddedDataSchemaProvider.DATA_CONTENT_TYPE => value.DeserializeISpecificRecord<PaymentMessage>(),
                     _ => JsonSerializer.Deserialize<PaymentMessage>(value)
                 };
 

@@ -19,7 +19,7 @@ public static class AvroDataSchemaProviderRegistration
             }));
 
         services.AddSingleton<IDataSchemaProvider, AvroEmbeddedDataSchemaProvider>();
-        services.AddKeyedSingleton<IDataSchemaProvider>("application/avro", (sp, _) => sp.GetRequiredService<IDataSchemaProvider>());
+        services.AddKeyedSingleton(AvroEmbeddedDataSchemaProvider.DATA_CONTENT_TYPE, (sp, _) => sp.GetRequiredService<IDataSchemaProvider>());
 
         return services;
     }

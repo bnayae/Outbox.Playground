@@ -2,16 +2,12 @@ version: "3.8"
 name: outbox
 
 services:
-
- 
   aspire-dashboard:
-    # https://learn.microsoft.com/en-us/dotnet/aspire/fundamentals/dashboard/configuration
     image: harbor-docker.payoneer.com/whitelist/mcr.microsoft.com/dotnet/aspire-dashboard:9.3
     container_name: outbox-aspire-dashboard
     ports:
       - 18888:18888
       - 18889:18889
-      # - 4317:18889
     environment:
       - DASHBOARD__TELEMETRYLIMITS__MAXLOGCOUNT=1000
       - DASHBOARD__TELEMETRYLIMITS__MAXTRACECOUNT=1000
@@ -19,18 +15,16 @@ services:
       - DOTNET_DASHBOARD_UNSECURED_ALLOW_ANONYMOUS=true
     restart: unless-stopped
     
-  # MSSQL
-    # MSSQL
   mssql:
-    image: harbor-docker.payoneer.com/whitelist/mcr.microsoft.com/mssql/server:2022-latest
+    build:
+      context: .
+      dockerfile: Dockerfile.mssql
     container_name: outbox_mssql
     environment:
       - ACCEPT_EULA=Y
       - SA_PASSWORD=MasadNetunim12!@
     ports:
       - "1433:1433"
-    volumes:
-      - ./init-db.sql:/docker-entrypoint-initdb.d/init-db.sql:ro
     command: >
         bash -c '
         /opt/mssql/bin/sqlservr &
@@ -42,7 +36,6 @@ services:
         wait
         '
 
-  # Kafka Broker
   broker:
     image: harbor-docker.payoneer.com/whitelist/confluentinc/cp-server:7.8.0
     hostname: broker
@@ -90,7 +83,9 @@ services:
       SCHEMA_REGISTRY_LISTENERS: http://0.0.0.0:28081
 
   connect:
-    image: harbor-docker.payoneer.com/whitelist/cnfldemos/cp-server-connect-datagen:0.6.4-7.6.0
+    build:
+      context: .
+      dockerfile: Dockerfile.connect
     hostname: connect
     container_name: outbox_connect
     depends_on:
@@ -100,7 +95,6 @@ services:
     ports:
       - "8083:8083"
     volumes:
-      - ./confluentinc-kafka-connect-jdbc-10.8.4.zip:/tmp/kafka-connect-jdbc.zip
       - connect-plugins:/usr/share/confluent-hub-components      
     environment:
       CONNECT_BOOTSTRAP_SERVERS: 'broker:29092'
@@ -182,7 +176,6 @@ services:
       KSQL_KSQL_LOGGING_PROCESSING_TOPIC_AUTO_CREATE: 'true'
       KSQL_KSQL_LOGGING_PROCESSING_STREAM_AUTO_CREATE: 'true'
 
-  
   preparation:
     image: harbor-docker.payoneer.com/whitelist/confluentinc/cp-server:7.8.0
     hostname: preparation
@@ -203,17 +196,15 @@ services:
       echo "Record published to topic '\''payoneer_sre'\''."
       '
 
- 
   connector-setup:
-    image: harbor-docker.payoneer.com/whitelist/confluentinc/cp-server:7.8.0
+    build:
+      context: .
+      dockerfile: Dockerfile.connector-setup
     hostname: connector-setup
     container_name: outbox_connector-setup
     depends_on:
       - connect
       - mssql
-    volumes:
-      - ./connector_mssql-jdbc-source-connector_outbox_config.json:/tmp/connector_config.json:ro
-      - ./connector_mssql-jdbc-source-connector_outbox_high_rist_config.json:/tmp/connector_high_risk_config.json:ro
     command: >
       bash -c '
       echo "Waiting for Kafka Connect to be ready...";
@@ -255,7 +246,6 @@ services:
       curl -s http://connect:8083/connectors/mssql-jdbc-source-connector_outbox/status;
       echo "";
       '
- 
 
 volumes:
   connect-plugins:

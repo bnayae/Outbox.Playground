@@ -1,0 +1,3 @@
+FROM harbor-docker.payoneer.com/whitelist/confluentinc/cp-server:7.8.0
+COPY connector_mssql-jdbc-source-connector_outbox_config.json /tmp/connector_config.json
+COPY connector_mssql-jdbc-source-connector_outbox_high_rist_config.json /tmp/connector_high_risk_config.json

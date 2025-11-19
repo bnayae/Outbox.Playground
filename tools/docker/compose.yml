@@ -2,12 +2,16 @@ version: "3.8"
 name: outbox
 
 services:
+
+ 
   aspire-dashboard:
+    # https://learn.microsoft.com/en-us/dotnet/aspire/fundamentals/dashboard/configuration
     image: harbor-docker.payoneer.com/whitelist/mcr.microsoft.com/dotnet/aspire-dashboard:9.3
     container_name: outbox-aspire-dashboard
     ports:
       - 18888:18888
       - 18889:18889
+      # - 4317:18889
     environment:
       - DASHBOARD__TELEMETRYLIMITS__MAXLOGCOUNT=1000
       - DASHBOARD__TELEMETRYLIMITS__MAXTRACECOUNT=1000
@@ -15,6 +19,7 @@ services:
       - DOTNET_DASHBOARD_UNSECURED_ALLOW_ANONYMOUS=true
     restart: unless-stopped
     
+# MSSQL
   mssql:
     build:
       context: .
@@ -36,6 +41,19 @@ services:
         wait
         '
 
+# MongoDB
+  mongodb:
+    build:
+      context: .
+      dockerfile: Dockerfile.mongodb
+    container_name: outbox_mongodb
+    ports:
+      - "27017:27017"
+    volumes:
+      - mongodb-data:/data/db
+    restart: unless-stopped
+      
+# Kafka Broker
   broker:
     image: harbor-docker.payoneer.com/whitelist/confluentinc/cp-server:7.8.0
     hostname: broker
@@ -176,6 +194,7 @@ services:
       KSQL_KSQL_LOGGING_PROCESSING_TOPIC_AUTO_CREATE: 'true'
       KSQL_KSQL_LOGGING_PROCESSING_STREAM_AUTO_CREATE: 'true'
 
+  
   preparation:
     image: harbor-docker.payoneer.com/whitelist/confluentinc/cp-server:7.8.0
     hostname: preparation
@@ -196,6 +215,7 @@ services:
       echo "Record published to topic '\''payoneer_sre'\''."
       '
 
+ 
   connector-setup:
     build:
       context: .
@@ -246,11 +266,16 @@ services:
       curl -s http://connect:8083/connectors/mssql-jdbc-source-connector_outbox/status;
       echo "";
       '
+ 
 
 volumes:
   connect-plugins:
     driver: local
-
+  mongodb-data:
+    driver: local
+  mongodb-config:
+    driver: local
+    
 networks:
   default:
     name: kafka_network

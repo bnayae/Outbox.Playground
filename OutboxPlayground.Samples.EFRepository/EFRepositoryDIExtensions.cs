@@ -6,7 +6,7 @@ namespace Microsoft.Extensions.DependencyInjection;
 
 public static class EFRepositoryDIExtensions
 {
-    public static IServiceCollection AddPaymentRepository(this IServiceCollection services, string connStr = "PaymentConnection")
+    public static IServiceCollection AddPaymentEFRepository(this IServiceCollection services, string connStr = "PaymentConnection")
     {
         services.AddDbContextFactory<PaymentDbContext>(optionsBuilder =>
             {

@@ -1,0 +1,21 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>net8.0</TargetFramework>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <Nullable>enable</Nullable>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="MongoDB.Driver" Version="2.25.0" />
+  </ItemGroup>
+
+  <ItemGroup>
+	  <PackageReference Include="Microsoft.Extensions.DependencyInjection.Abstractions" Version="9.0.10" />
+
+	  <ProjectReference Include="..\OutboxPlayground.Infra.Abstractions\OutboxPlayground.Infra.Abstractions.csproj" />
+    <ProjectReference Include="..\OutboxPlayground.Infra.MongoOutboxExtensions\OutboxPlayground.Infra.MongoOutboxExtensions.csproj" />
+    <ProjectReference Include="..\OutboxPlayground.Samples.Abstractions\OutboxPlayground.Samples.Abstractions.csproj" />
+  </ItemGroup>
+
+</Project>

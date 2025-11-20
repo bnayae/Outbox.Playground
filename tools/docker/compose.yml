@@ -19,7 +19,7 @@ services:
       - DOTNET_DASHBOARD_UNSECURED_ALLOW_ANONYMOUS=true
     restart: unless-stopped
     
-# MSSQL
+  # MSSQL
   mssql:
     build:
       context: .
@@ -41,7 +41,7 @@ services:
         wait
         '
 
-# MongoDB
+  # MongoDB
   mongodb:
     build:
       context: .
@@ -53,7 +53,7 @@ services:
       - mongodb-data:/data/db
     restart: unless-stopped
       
-# Kafka Broker
+  # Kafka Broker
   broker:
     image: harbor-docker.payoneer.com/whitelist/confluentinc/cp-server:7.8.0
     hostname: broker
@@ -86,13 +86,20 @@ services:
       CONFLUENT_METRICS_ENABLE: 'true'
       CONFLUENT_SUPPORT_CUSTOMER_ID: 'anonymous'
       CLUSTER_ID: 'MkU3OEVBNTcwNTJENDM2Qk'
+    healthcheck:
+      test: ["CMD", "kafka-broker-api-versions", "--bootstrap-server", "broker:29092"]
+      interval: 10s
+      timeout: 10s
+      retries: 10
+      start_period: 40s
 
   schema-registry:
     image: harbor-docker.payoneer.com/whitelist/confluentinc/cp-schema-registry:7.8.0
     hostname: schema-registry
     container_name: outbox_schema-registry
     depends_on:
-      - broker
+      broker:
+        condition: service_healthy
     ports:
       - "28081:28081"
     environment:
@@ -107,9 +114,14 @@ services:
     hostname: connect
     container_name: outbox_connect
     depends_on:
-      - broker
-      - schema-registry
-      - mssql
+      broker:
+        condition: service_healthy
+      schema-registry:
+        condition: service_started
+      mssql:
+        condition: service_started
+      mongodb:
+        condition: service_started
     ports:
       - "8083:8083"
     volumes:
@@ -146,16 +158,26 @@ services:
         echo 'Starting Kafka Connect...'
         /etc/confluent/docker/run
       "
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8083/"]
+      interval: 10s
+      timeout: 10s
+      retries: 20
+      start_period: 60s
 
   control-center:
     image: harbor-docker.payoneer.com/whitelist/confluentinc/cp-enterprise-control-center:7.8.0
     hostname: control-center
     container_name: outbox_control-center
     depends_on:
-      - broker
-      - schema-registry
-      - connect
-      - ksqldb-server
+      broker:
+        condition: service_healthy
+      schema-registry:
+        condition: service_started
+      connect:
+        condition: service_healthy
+      ksqldb-server:
+        condition: service_started
     ports:
       - "9021:9021"
     environment:
@@ -176,8 +198,10 @@ services:
     hostname: ksqldb-server
     container_name: outbox_ksqldb-server
     depends_on:
-      - broker
-      - connect
+      broker:
+        condition: service_healthy
+      connect:
+        condition: service_healthy
     ports:
       - "8088:8088"
     environment:
@@ -200,10 +224,15 @@ services:
     hostname: preparation
     container_name: outbox_prepairation
     depends_on:
-      - broker
-      - control-center
+      broker:
+        condition: service_healthy
+      control-center:
+        condition: service_started
     command: >
       sh -c '
+      echo "Waiting for broker to be fully ready...";
+      sleep 10;
+      
       if kafka-topics --describe --topic payoneer_sre --bootstrap-server broker:29092; then
         echo "Topic '\''payoneer_sre'\'' already exists."
       else
@@ -223,16 +252,25 @@ services:
     hostname: connector-setup
     container_name: outbox_connector-setup
     depends_on:
-      - connect
-      - mssql
+      connect:
+        condition: service_healthy
+      broker:
+        condition: service_healthy
+      mssql:
+        condition: service_started
+      mongodb:
+        condition: service_started
     command: >
       bash -c '
       echo "Waiting for Kafka Connect to be ready...";
-      while ! curl -s -f http://connect:8083/connectors > /dev/null; do
-        echo "Connect not ready yet, waiting...";
+      for i in {1..60}; do
+        if curl -s -f http://connect:8083/connectors > /dev/null; then
+          echo "Kafka Connect is ready!";
+          break;
+        fi
+        echo "Connect not ready yet, waiting... (attempt $$i/60)";
         sleep 5;
       done;
-      echo "Kafka Connect is ready!";
             
       echo "Creating topics if they do not exist...";
       if kafka-topics --describe --topic applicationevents_Outbox --bootstrap-server broker:29092; then
@@ -249,21 +287,40 @@ services:
           echo "Topic '\''applicationevents_HighRiskOutbox'\'' created."
       fi
       
-      echo "Creating MSSQL JDBC Source Connector...";
+      echo "Creating MSSQL JDBC Source Connectors...";
       curl -s -X POST http://connect:8083/connectors \
         -H "Content-Type: application/json" \
-        -d @/tmp/connector_config.json;
+        -d @/tmp/connector_config.json || echo "Failed to create MSSQL Outbox connector";
       
-      echo "Creating MSSQL JDBC Source Connector...";
       curl -s -X POST http://connect:8083/connectors \
         -H "Content-Type: application/json" \
-        -d @/tmp/connector_high_risk_config.json;
+        -d @/tmp/connector_high_risk_config.json || echo "Failed to create MSSQL HighRisk connector";
       
       echo "";
-      echo "Connector created successfully!";
+      echo "Creating MongoDB Source Connectors...";
+      curl -s -X POST http://connect:8083/connectors \
+        -H "Content-Type: application/json" \
+        -d @/tmp/connector_mongodb_config.json || echo "Failed to create MongoDB Outbox connector";
+
+      curl -s -X POST http://connect:8083/connectors \
+        -H "Content-Type: application/json" \
+        -d @/tmp/connector_mongodb_high_risk_config.json || echo "Failed to create MongoDB HighRisk connector";
+    
+      echo "";
+      echo "All connectors creation attempted!";
       echo "Checking connector status...";
       sleep 5;
+      
+      echo "Listing all connectors:";
+      curl -s http://connect:8083/connectors;
+      
+      echo "";
+      echo "MSSQL Outbox Connector:";
       curl -s http://connect:8083/connectors/mssql-jdbc-source-connector_outbox/status;
+      
+      echo "";
+      echo "MongoDB Outbox Connector:";
+      curl -s http://connect:8083/connectors/mongodb-source-connector_outbox/status;
       echo "";
       '
  

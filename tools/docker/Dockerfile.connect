@@ -1,2 +1,15 @@
 FROM harbor-docker.payoneer.com/whitelist/cnfldemos/cp-server-connect-datagen:0.6.4-7.6.0
+
+# Copy the JDBC connector zip
 COPY confluentinc-kafka-connect-jdbc-10.8.4.zip /tmp/kafka-connect-jdbc.zip
+
+# Copy MongoDB Kafka Connector ZIP
+COPY mongodb-kafka-connect-mongodb-2.0.1.zip /tmp/mongo-kafka-connect.zip
+
+USER root
+RUN mkdir -p /usr/share/confluent-hub-components/mongodb-kafka-connect && \
+    cd /usr/share/confluent-hub-components/mongodb-kafka-connect && \
+    jar xf /tmp/mongo-kafka-connect.zip && \
+    chmod -R 755 /usr/share/confluent-hub-components && \
+    rm /tmp/mongo-kafka-connect.zip
+USER appuser

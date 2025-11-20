@@ -1,0 +1,20 @@
+{
+  "name": "mongodb-source-connector_outbox",
+  "config": {
+    "connector.class": "com.mongodb.kafka.connect.MongoSourceConnector",
+    "connection.uri": "mongodb://mongodb:27017",
+    "database": "outbox",
+    "collection": "Outbox",
+    "topic.prefix": "applicationevents",
+	"topic.creation.default.partitions": "1",
+	"poll.interval.ms": "5000",
+    "auto.create.topics.enable": "true",
+	"schema.registry.url": "http://localhost:28081",
+    "topic.creation.default.replication.factor": "1",
+    "pipeline": "[{\"$match\": {\"operationType\": \"insert\"}}]",
+    "publish.full.document.only": "true",
+    "copy.existing": "false",
+    "poll.max.batch.size": "1000",
+    "poll.await.time.ms": "5000"
+  }
+}

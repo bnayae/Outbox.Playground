@@ -18,9 +18,9 @@ internal class PaymentRepository : IPaymentRepository
         IDataSchemaProvider dataSchemaProvider)
     {
         _database = database;
-        _payments = database.GetCollection<PaymentRequest>("payments");
-        _users = database.GetCollection<User>("users");
-        _outbox = database.GetCollection<CloudEvent>("outbox");
+        _payments = database.GetCollection<PaymentRequest>("Payments");
+        _users = database.GetCollection<User>("Users");
+        _outbox = database.GetCollection<CloudEvent>("Outbox");
         _riskAssessmentService = riskAssessmentService;
         _eventBuilder = CloudEvent.CreateBuilder("MyBusinessDomain")
                                   .AddSchema(dataSchemaProvider)

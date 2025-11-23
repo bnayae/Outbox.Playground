@@ -14,7 +14,7 @@ namespace OutboxPlayground.Samples.MongoDbRepository
             mongoDatabase.EnsureOutboxCollections();
             services.AddSingleton(mongoDatabase);
             services.AddKeyedScoped<IPaymentRepository, PaymentRepository>("default");
-            //services.AddKeyedScoped<IPaymentRepository, PaymentMultiOutboxRepository>("multi-outbox");
+            services.AddKeyedScoped<IPaymentRepository, PaymentMultiOutboxRepository>("multi-outbox");
 
             return services;
         }

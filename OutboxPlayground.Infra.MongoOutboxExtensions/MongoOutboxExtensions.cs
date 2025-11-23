@@ -38,14 +38,29 @@ public static class MongoOutboxExtensions
             BsonClassMap.RegisterClassMap<CloudEvent>(cm =>
             {
                 cm.AutoMap();
-                cm.MapMember(c => c.SpecVersion).SetIsRequired(true);
-                cm.MapMember(c => c.Type).SetIsRequired(true);
-                cm.MapMember(c => c.Source).SetIsRequired(true);
-                cm.MapMember(c => c.Id).SetIsRequired(true);
-                cm.MapMember(c => c.Time).SetIsRequired(true);
-                cm.MapMember(c => c.PartitionKey).SetIsRequired(true);
-                cm.MapMember(c => c.TraceParent)
+                cm.SetIgnoreExtraElements(true);
+                
+                // Map properties with camelCase element names to match JSON schema
+                cm.MapMember(c => c.SpecVersion).SetElementName("specVersion").SetIsRequired(true);
+                cm.MapMember(c => c.Type).SetElementName("type").SetIsRequired(true);
+                cm.MapMember(c => c.Source).SetElementName("source").SetIsRequired(true);
+                // Map Id as a regular field, not as MongoDB's _id
+                cm.UnmapMember(c => c.Id);
+                cm.MapMember(c => c.Id).SetElementName("id").SetIsRequired(true);
+                cm.MapMember(c => c.Time).SetElementName("time").SetIsRequired(true)
+                    .SetSerializer(new DateTimeOffsetSerializer(MongoDB.Bson.BsonType.DateTime));
+                cm.MapMember(c => c.PartitionKey).SetElementName("partitionKey").SetIsRequired(true);
+                cm.MapMember(c => c.DataContentType).SetElementName("dataContentType");
+                cm.MapMember(c => c.DataSchema).SetElementName("dataSchema");
+                cm.MapMember(c => c.Subject).SetElementName("subject");
+                cm.MapMember(c => c.Data).SetElementName("data");
+                cm.MapMember(c => c.DataRef).SetElementName("dataRef");
+                cm.MapMember(c => c.TraceParent).SetElementName("traceParent")
                     .SetSerializer(new NullableStructStringSerializer<OtelTraceParent>());
+                cm.MapMember(c => c.Sequence).SetElementName("sequence");
+                
+                // Don't map any property as the MongoDB _id - let MongoDB auto-generate it
+                cm.SetIdMember(null);
             });
         }
 

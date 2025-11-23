@@ -285,7 +285,21 @@ services:
       else
           kafka-topics --create --topic applicationevents_HighRiskOutbox --bootstrap-server broker:29092 --partitions 1 --replication-factor 1
           echo "Topic '\''applicationevents_HighRiskOutbox'\'' created."
+      fi   
+      
+      if kafka-topics --describe --topic applicationevents_Outbox_Mongo --bootstrap-server broker:29092; then
+          echo "Topic '\''applicationevents_Outbox_Mongo'\'' already exists."
+      else
+          kafka-topics --create --topic applicationevents_Outbox_Mongo --bootstrap-server broker:29092 --partitions 1 --replication-factor 1
+          echo "Topic '\''applicationevents_Outbox_Mongo'\'' created."
       fi
+              
+      if kafka-topics --describe --topic applicationevents_HighRiskOutbox_Mongo --bootstrap-server broker:29092; then
+          echo "Topic '\''applicationevents_HighRiskOutbox_Mongo'\'' already exists."
+      else
+          kafka-topics --create --topic applicationevents_HighRiskOutbox_Mongo --bootstrap-server broker:29092 --partitions 1 --replication-factor 1
+          echo "Topic '\''applicationevents_HighRiskOutbox_Mongo'\'' created."
+      fi   
       
       echo "Creating MSSQL JDBC Source Connectors...";
       curl -s -X POST http://connect:8083/connectors \
@@ -301,11 +315,11 @@ services:
       curl -s -X POST http://connect:8083/connectors \
         -H "Content-Type: application/json" \
         -d @/tmp/connector_mongodb_config.json || echo "Failed to create MongoDB Outbox connector";
-
+         
       curl -s -X POST http://connect:8083/connectors \
         -H "Content-Type: application/json" \
         -d @/tmp/connector_mongodb_high_risk_config.json || echo "Failed to create MongoDB HighRisk connector";
-    
+         
       echo "";
       echo "All connectors creation attempted!";
       echo "Checking connector status...";

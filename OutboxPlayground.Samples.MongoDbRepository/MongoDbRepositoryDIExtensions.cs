@@ -1,5 +1,6 @@
 ﻿using Microsoft.Extensions.DependencyInjection;
 using MongoDB.Driver;
+using OutboxPlayground.Infra.MongoOutboxExtensions;
 using OutboxPlayground.Samples.Abstractions;
 
 namespace OutboxPlayground.Samples.MongoDbRepository
@@ -10,6 +11,7 @@ namespace OutboxPlayground.Samples.MongoDbRepository
         {
             var mongoClient = new MongoClient(connStr);
             IMongoDatabase mongoDatabase = mongoClient.GetDatabase("outbox");
+            mongoDatabase.EnsureOutboxCollections();
             services.AddSingleton(mongoDatabase);
             services.AddKeyedScoped<IPaymentRepository, PaymentRepository>("default");
             //services.AddKeyedScoped<IPaymentRepository, PaymentMultiOutboxRepository>("multi-outbox");

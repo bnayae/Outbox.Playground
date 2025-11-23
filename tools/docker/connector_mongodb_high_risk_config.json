@@ -2,19 +2,26 @@
   "name": "mongodb-source-connector_highriskoutbox",
   "config": {
     "connector.class": "com.mongodb.kafka.connect.MongoSourceConnector",
+    "tasks.max": "1",
     "connection.uri": "mongodb://mongodb:27017",
     "database": "outbox",
     "collection": "HighRiskOutbox",
-    "topic.prefix": "applicationevents",
-	"topic.creation.default.partitions": "1",
-	"poll.interval.ms": "5000",
-    "auto.create.topics.enable": "true",
-	"schema.registry.url": "http://localhost:28081",
-    "topic.creation.default.replication.factor": "1",
+    "topic.prefix": "",
+    "output.format.key": "json",
+    "output.format.value": "json",
+    "output.json.formatter": "com.mongodb.kafka.connect.source.json.formatter.SimplifiedJson",
     "pipeline": "[{\"$match\": {\"operationType\": \"insert\"}}]",
     "publish.full.document.only": "true",
     "copy.existing": "false",
     "poll.max.batch.size": "1000",
-    "poll.await.time.ms": "5000"
+    "poll.await.time.ms": "1000",
+    "poll.interval.ms": "1000",
+    "key.converter": "org.apache.kafka.connect.storage.StringConverter",
+    "value.converter": "org.apache.kafka.connect.json.JsonConverter",
+    "value.converter.schemas.enable": "false",
+    "transforms": "routeTopic",
+    "transforms.routeTopic.type": "org.apache.kafka.connect.transforms.RegexRouter",
+    "transforms.routeTopic.regex": ".*",
+    "transforms.routeTopic.replacement": "applicationevents_HighRiskOutbox_Mongo"
   }
 }

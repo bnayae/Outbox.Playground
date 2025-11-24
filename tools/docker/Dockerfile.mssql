@@ -1,0 +1,2 @@
+FROM harbor-docker.payoneer.com/whitelist/mcr.microsoft.com/mssql/server:2022-latest
+COPY init-db.sql /docker-entrypoint-initdb.d/init-db.sql

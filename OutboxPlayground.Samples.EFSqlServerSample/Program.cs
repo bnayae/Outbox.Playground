@@ -4,6 +4,7 @@
 using Microsoft.Extensions;
 using OutboxPlayground.Samples.Abstractions;
 using OutboxPlayground.Samples.EFSqlServerSample;
+using OutboxPlayground.Samples.MongoDbRepository;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -13,8 +14,12 @@ var services = builder.Services;
 services.AddEndpointsApiExplorer();
 services.AddSwaggerGen();
 
-var connStr = builder.Configuration.GetConnectionString("PaymentConnection") ?? throw new Exception("PaymentConnection not found");
-services.AddPaymentRepository(connStr);
+//var connStr = builder.Configuration.GetConnectionString("PaymentConnection") ?? throw new Exception("PaymentConnection not found");
+//services.AddPaymentEFRepository(connStr);
+
+var mongoDbConnStr = builder.Configuration.GetConnectionString("MongoDbConnection") ?? throw new Exception("MongoDbConnection not found");
+services.AddPaymentMongoDbRepository(mongoDbConnStr);
+
 builder.AddOtel();
 
 // services.AddJsonDataSchemaProvider();

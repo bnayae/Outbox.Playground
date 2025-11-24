@@ -1,0 +1,12 @@
+FROM harbor-docker.payoneer.com/whitelist/mongo:latest
+
+# Copy initialization script
+COPY init-db-mongo.js /docker-entrypoint-initdb.d/init-db-mongo.js
+
+# Copy custom entrypoint and fix line endings
+COPY mongo-entrypoint.sh /usr/local/bin/mongo-entrypoint.sh
+RUN sed -i 's/\r$//' /usr/local/bin/mongo-entrypoint.sh && \
+    chmod +x /usr/local/bin/mongo-entrypoint.sh
+
+# Use custom entrypoint
+ENTRYPOINT ["/usr/local/bin/mongo-entrypoint.sh"]
